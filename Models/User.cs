@@ -1,4 +1,6 @@
-﻿namespace EmbarcaPro.API.Models
+﻿using EmbarcaPro.API.Enum;
+
+namespace EmbarcaPro.API.Models
 {
     public class User
     {
@@ -9,9 +11,13 @@
 
         public string Email { get; set; } = string.Empty;
 
-        
+        public string PasswordHash { get; set; } = string.Empty;
 
+        public UserRole Role { get; set; }
 
+        public UserStatus Active { get; set; }
+
+        public DateTime RegisterDate { get; set; } = DateTime.UtcNow;
 
     }
 }
