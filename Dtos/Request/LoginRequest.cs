@@ -1,10 +1,14 @@
-﻿namespace EmbarcaPro.API.Dtos.Request
-{
-    public class LoginRequest
-    {
+﻿using System.ComponentModel.DataAnnotations;
 
-        string Email;
-        string Password;
+namespace EmbarcaPro.API.Dtos.Request
+{
+    public record LoginRequest
+    {
+        [Required(ErrorMessage = "E-mail inválido.")]
+        public required string Email { get; init; }
+
+        [Required(ErrorMessage = "Credenciais inválidas.")]
+        public required string Password { get; init; }
 
     }
 }
