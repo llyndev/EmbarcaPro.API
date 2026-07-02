@@ -22,5 +22,19 @@ namespace EmbarcaPro.API.Controller
             return Ok(new { message });
         }
 
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequest request)
+        {
+            var (success, message, data) = await userService.LoginAsync(request);
+
+            if (!success)
+            {
+                return BadRequest(new { error = message });
+            }
+
+            return Ok(new { message, data });
+
+        }
+
     }
 }

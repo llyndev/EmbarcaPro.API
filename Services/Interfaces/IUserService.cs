@@ -1,11 +1,13 @@
 ﻿using EmbarcaPro.API.Dtos.Request;
+using EmbarcaPro.API.Dtos.Response;
 
 namespace EmbarcaPro.API.Services.Interfaces
 {
     public interface IUserService
     {
 
-        Task<(bool Sucess, string Message)> RegisterUserAsync(RegisterRequest request);
+        Task<(bool Success, string Message)> RegisterUserAsync(RegisterRequest request);
+        Task<(bool Success, string Message, LoginResponse? Data)> LoginAsync(LoginRequest request);
 
     }
 }

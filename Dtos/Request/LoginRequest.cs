@@ -4,10 +4,11 @@ namespace EmbarcaPro.API.Dtos.Request
 {
     public record LoginRequest
     {
-        [Required(ErrorMessage = "E-mail inválido.")]
+        [Required(ErrorMessage = "O e-mail é obrigatório.")]
+        [EmailAddress(ErrorMessage = "E-mail inválido.")]
         public required string Email { get; init; }
 
-        [Required(ErrorMessage = "Credenciais inválidas.")]
+        [Required(ErrorMessage = "A senha é obrigatória.")]
         public required string Password { get; init; }
 
     }
