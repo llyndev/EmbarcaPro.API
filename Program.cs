@@ -52,6 +52,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ITrailerService, TrailerService>();
+builder.Services.AddScoped<IDriverService, DriverService>();
+builder.Services.AddScoped<ITruckService, TruckService>();
 
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
