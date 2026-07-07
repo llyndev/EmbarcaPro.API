@@ -10,6 +10,10 @@ namespace EmbarcaPro.API.Dtos.Request
         [StringLength(10, ErrorMessage = "A placa deve ter no máximo 10 caracteres.")]
         public required string LicensePlate { get; init; }
 
+        [Required(ErrorMessage = "A quantidade de eixos é obrigatória.")]
+        [Range(1, 4, ErrorMessage = "A quantidade de eixos deve ter entre 1 a 4 eixos.")]
+        public required int TrailerAxle { get; init; }
+
         [Required(ErrorMessage = "O tipo da carreta é obrigatório.")]
         [EnumDataType(typeof(TrailerType), ErrorMessage = "Tipo de carreta inválido.")]
         public required TrailerType Type { get; init; }

@@ -21,6 +21,7 @@ namespace EmbarcaPro.API.Services
 
             var newTrailer = new Trailer(
                 licensePlate: request.LicensePlate,
+                trailerAxle: request.TrailerAxle,
                 type: request.Type,
                 brand: request.Brand,
                 maxCapacityKg: request.MaxCapacityKg,

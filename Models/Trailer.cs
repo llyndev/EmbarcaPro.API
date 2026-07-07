@@ -10,6 +10,8 @@ namespace EmbarcaPro.API.Models
         // Placa da Carreta
         public string LicensePlate { get; private set; }
 
+        public int TrailerAxle { get; private set; }
+
         public TrailerType Type { get; private set; }
 
         public decimal MaxCapacityKg { get; private set; }
@@ -25,10 +27,11 @@ namespace EmbarcaPro.API.Models
 
         protected Trailer() { }
 
-        public Trailer(string licensePlate, TrailerType type, string brand, decimal maxCapacityKg, decimal cubicMetersVolume)
+        public Trailer(string licensePlate, int trailerAxle, TrailerType type, string brand, decimal maxCapacityKg, decimal cubicMetersVolume)
         {
 
             LicensePlate = licensePlate.Replace("-", "").Replace(" ", "").ToUpper().Trim();
+            TrailerAxle = trailerAxle;
             Type = type;
             Brand = brand;
             MaxCapacityKg = maxCapacityKg;

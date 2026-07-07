@@ -8,6 +8,8 @@
         // Placa veículo
         public string LicensePlate { get; private set; }
 
+        public int TruckAxle { get; private set; }
+
         public string Brand { get; private set; }
 
         public string Model { get; private set; }
@@ -21,9 +23,10 @@
 
         protected Truck() { }
 
-        public Truck(string licensePlate, string brand, string model, decimal maxCapacityKg)
+        public Truck(string licensePlate, int truckAxle, string brand, string model, decimal maxCapacityKg)
         {
             LicensePlate = licensePlate.ToUpper().Trim();
+            TruckAxle = truckAxle;
             Brand = brand;
             Model = model;
             MaxCapacityKg = maxCapacityKg;

@@ -25,10 +25,11 @@ namespace EmbarcaPro.API.Services
             }
 
             var truck = new Truck(
-                request.LicensePlate,
-                request.Brand,
-                request.Model,
-                request.MaxCapacityKg
+                licensePlate: request.LicensePlate,
+                truckAxle: request.TruckAxle,
+                brand: request.Brand,
+                model: request.Model,
+                maxCapacityKg: request.MaxCapacityKg
             );
 
             await context.Trucks.AddAsync(truck);

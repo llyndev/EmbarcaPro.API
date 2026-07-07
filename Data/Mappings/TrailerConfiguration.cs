@@ -24,6 +24,10 @@ namespace EmbarcaPro.API.Data.Mappings
 
             builder.HasIndex(t => t.LicensePlate).IsUnique();
 
+            builder.Property(t => t.TrailerAxle)
+                .HasColumnName("trailer_axle")
+                .IsRequired();
+
             builder.Property(t => t.Type)
                 .HasColumnType("type")
                 .HasConversion<string>()
