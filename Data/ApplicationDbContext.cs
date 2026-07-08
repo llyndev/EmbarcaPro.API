@@ -16,6 +16,8 @@ namespace EmbarcaPro.API.Data
 
         public DbSet<Trailer> Trailers { get; set; }
 
+        public DbSet<Facility> Facilities { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
