@@ -18,6 +18,8 @@ namespace EmbarcaPro.API.Data
 
         public DbSet<Facility> Facilities { get; set; }
 
+        public DbSet<Freight> Freights { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
