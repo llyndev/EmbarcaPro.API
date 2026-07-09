@@ -2,6 +2,7 @@
 using EmbarcaPro.API.Dtos.Request;
 using EmbarcaPro.API.Models;
 using EmbarcaPro.API.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EmbarcaPro.API.Services
 {
@@ -9,7 +10,6 @@ namespace EmbarcaPro.API.Services
     {
         public async Task<(bool Success, string Message, Facility? Facility)> AddFacilityAsync(CreateFacilityRequest request)
         {
-            // Regra de Negócio: evitar cadastrar a mesma Usina com o mesmo nome na mesma cidade
 
             var newFacility = new Facility(
                 name: request.Name,
