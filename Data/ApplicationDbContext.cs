@@ -12,6 +12,8 @@ namespace EmbarcaPro.API.Data
 
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Driver> Drivers { get; set; }
+
         public DbSet<Truck> Trucks { get; set; }
 
         public DbSet<Trailer> Trailers { get; set; }
