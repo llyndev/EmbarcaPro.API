@@ -42,7 +42,7 @@ namespace EmbarcaPro.API.Data.Mappings
                 .HasPrecision(10, 2)
                 .IsRequired();
 
-            builder.Property(t => t.IsAvaiable)
+            builder.Property(t => t.IsAvailable)
                 .HasColumnName("is_available")
                 .HasDefaultValue(true);
 
