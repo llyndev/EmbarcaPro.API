@@ -6,7 +6,7 @@ namespace EmbarcaPro.API.Data.Mappings
 {
     public class FreightConfiguration : IEntityTypeConfiguration<Freight>
     {
-        public void Configure(EntityTypeBuilder<Freight> builder>) {
+        public void Configure(EntityTypeBuilder<Freight> builder) {
 
             builder.ToTable("freights");
 
