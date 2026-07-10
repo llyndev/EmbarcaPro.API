@@ -17,7 +17,7 @@
         // Capacidade de carga em KG
         public decimal MaxCapacityKg { get; private set; }
 
-        public bool IsAvaiable { get; private set; }
+        public bool IsAvailable { get; private set; }
 
         public DateTime CreatedAt { get; private set; }
 
@@ -30,18 +30,18 @@
             Brand = brand;
             Model = model;
             MaxCapacityKg = maxCapacityKg;
-            IsAvaiable = true;
+            IsAvailable = true;
             CreatedAt = DateTime.UtcNow;
         }
 
         public void MarkAsUnavailable()
         {
-            IsAvaiable = false;
+            IsAvailable = false;
         }
         
         public void MarkAsAvailable()
         {
-            IsAvaiable = true;
+            IsAvailable = true;
         }
 
     }
