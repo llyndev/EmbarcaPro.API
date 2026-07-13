@@ -35,6 +35,7 @@ namespace EmbarcaPro.API.Models
             Type = type;
             Brand = brand;
             MaxCapacityKg = maxCapacityKg;
+            CubicMetersVolume = cubicMetersVolume;
             IsAvailable = true;
             CreatedAt = DateTime.UtcNow;
         }
