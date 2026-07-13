@@ -11,7 +11,7 @@ namespace EmbarcaPro.API.Dtos.Request
         [StringLength(18)]
         public required string Cnpj { get; init; }
 
-        public required Address Address { get; init; }
+        public required AddressRequest Address { get; init; }
 
     }
 }

@@ -31,9 +31,16 @@ namespace EmbarcaPro.API.Data.Mappings
                 .HasMaxLength(150)
                 .IsRequired();
 
-            builder.Property(d => d.Address)
-                .HasColumnName("address")
-                .IsRequired();
+            builder.ComplexProperty(d => d.Address, address =>
+            {
+                address.Property(a => a.Street).HasColumnName("street").HasMaxLength(150).IsRequired();
+                address.Property(a => a.Number).HasColumnName("number").HasMaxLength(20).IsRequired();
+                address.Property(a => a.Complement).HasColumnName("complement").HasMaxLength(100).IsRequired(false);
+                address.Property(a => a.Neighborhood).HasColumnName("neighborhood").HasMaxLength(100).IsRequired();
+                address.Property(a => a.City).HasColumnName("city").HasMaxLength(100).IsRequired();
+                address.Property(a => a.State).HasColumnName("state").HasMaxLength(2).IsRequired();
+                address.Property(a => a.ZipCode).HasColumnName("zip_code").HasMaxLength(8).IsRequired();
+            });
 
             builder.Property(d => d.Cpf)
                 .HasColumnName("cpf")

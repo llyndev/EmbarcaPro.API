@@ -24,7 +24,7 @@ namespace EmbarcaPro.API.Dtos.Request
         public required string Cnh { get; init; }
 
         [Required(ErrorMessage = "O endereço é obrigatório.")]
-        public required Address Address { get; init; }
+        public required AddressRequest Address { get; init; }
 
     }
 }

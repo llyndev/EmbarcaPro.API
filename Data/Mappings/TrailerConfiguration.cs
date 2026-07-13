@@ -29,9 +29,14 @@ namespace EmbarcaPro.API.Data.Mappings
                 .IsRequired();
 
             builder.Property(t => t.Type)
-                .HasColumnType("type")
+                .HasColumnName("type")
                 .HasConversion<string>()
                 .HasMaxLength(30)
+                .IsRequired();
+
+            builder.Property(t => t.MaxCapacityKg)
+                .HasColumnName("max_capacity_kg")
+                .HasPrecision(10, 2)
                 .IsRequired();
 
             builder.Property(t => t.Brand)

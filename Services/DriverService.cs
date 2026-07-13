@@ -21,13 +21,22 @@ namespace EmbarcaPro.API.Services
                 return (false, "Credenciais invalidas", null); // TODO: Adicionar detalhes no return
             }
 
+            var address = new Address(
+                    street: request.Address.Street,
+                    number: request.Address.Number,
+                    complement: request.Address.Complement ?? string.Empty,
+                    neighborhood: request.Address.Neighborhood,
+                    city: request.Address.City,
+                    state: request.Address.State,
+                    zipCode: request.Address.ZipCode);
+
             var driver = new Driver(
                 request.Name,
                 request.Phone,
                 request.Email,
                 request.Cpf,
                 request.Cnh,
-                request.Address);
+                address);
 
             await context.Set<Driver>().AddAsync(driver);
             await context.SaveChangesAsync();
