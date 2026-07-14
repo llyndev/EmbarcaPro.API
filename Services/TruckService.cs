@@ -1,4 +1,5 @@
-﻿using EmbarcaPro.API.Data;
+﻿using EmbarcaPro.API.Common.Results;
+using EmbarcaPro.API.Data;
 using EmbarcaPro.API.Dtos.Request;
 using EmbarcaPro.API.Models;
 using EmbarcaPro.API.Services.Interfaces;
@@ -14,14 +15,14 @@ namespace EmbarcaPro.API.Services
             return await context.Trucks.ToListAsync();
         }
 
-        public async Task<(bool Success, string Message, Truck? Data)> AddTruckAsync(CreateTruckRequest request)
+        public async Task<ServiceResult<Truck>> AddTruckAsync(CreateTruckRequest request)
         {
             // Verificar se a placa já existe.
             var plateExists = await context.Trucks.AnyAsync(t => t.LicensePlate == request.LicensePlate);
 
             if (plateExists)
             {
-                return (false, "Já existe um caminhão com esta placa.", null);
+                return ServiceResult<Truck>.Fail("Já existe um caminhão com esta placa.", ErrorType.Conflict);
             }
 
             var truck = new Truck(
@@ -35,7 +36,7 @@ namespace EmbarcaPro.API.Services
             await context.Trucks.AddAsync(truck);
             await context.SaveChangesAsync();
 
-            return (true, "Caminhão cadastrado na frota com sucesso!", truck);
+            return ServiceResult<Truck>.Ok(truck, "Caminhão cadastrado na frota com sucesso!");
 
 
         

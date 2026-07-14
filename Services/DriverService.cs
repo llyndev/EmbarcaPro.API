@@ -1,4 +1,5 @@
-﻿using EmbarcaPro.API.Data;
+﻿using EmbarcaPro.API.Common.Results;
+using EmbarcaPro.API.Data;
 using EmbarcaPro.API.Dtos.Request;
 using EmbarcaPro.API.Models;
 using EmbarcaPro.API.Services.Interfaces;
@@ -9,7 +10,7 @@ namespace EmbarcaPro.API.Services
     public class DriverService(ApplicationDbContext context) : IDriverService
     {
 
-        public async Task<(bool Success, string Message, Driver? Data)> AddDriverAsync(CreateDriverRequest request)
+        public async Task<ServiceResult<Driver>> AddDriverAsync(CreateDriverRequest request)
         {
             var cleanCpf = request.Cpf.Replace(".", "").Replace("-", "");
 
@@ -18,7 +19,7 @@ namespace EmbarcaPro.API.Services
 
             if (existingDriver != null)
             {
-                return (false, "Credenciais invalidas", null); // TODO: Adicionar detalhes no return
+                return ServiceResult<Driver>.Fail("Credenciais invalidas", ErrorType.Conflict);
             }
 
             var address = new Address(
@@ -41,7 +42,7 @@ namespace EmbarcaPro.API.Services
             await context.Set<Driver>().AddAsync(driver);
             await context.SaveChangesAsync();
 
-            return (true, "Motorista cadastrado com sucesso!", driver);
+            return ServiceResult<Driver>.Ok(driver, "Motorista cadastrado com sucesso!");
         }
     }
 }

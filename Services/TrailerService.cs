@@ -1,4 +1,5 @@
-﻿using EmbarcaPro.API.Data;
+﻿using EmbarcaPro.API.Common.Results;
+using EmbarcaPro.API.Data;
 using EmbarcaPro.API.Dtos.Request;
 using EmbarcaPro.API.Models;
 using EmbarcaPro.API.Services.Interfaces;
@@ -8,7 +9,7 @@ namespace EmbarcaPro.API.Services
 {
     public class TrailerService(ApplicationDbContext context) : ITrailerService
     {
-        public async Task<(bool Success, string Message, Trailer? Trailer)> AddTrailerAsync(CreateTrailerRequest request)
+        public async Task<ServiceResult<Trailer>> AddTrailerAsync(CreateTrailerRequest request)
         {
             var cleanPlate = request.LicensePlate.Replace("-", "").Replace(" ", "").ToUpper().Trim();
 
@@ -16,7 +17,7 @@ namespace EmbarcaPro.API.Services
 
             if (plateExists)
             {
-                return (false, $"A carreta com a placa {cleanPlate} já está cadastrada no sistema.", null);
+                return ServiceResult<Trailer>.Fail($"A carreta com a placa {cleanPlate} já está cadastrada no sistema.", ErrorType.Conflict);
             }
 
             var newTrailer = new Trailer(
@@ -32,7 +33,7 @@ namespace EmbarcaPro.API.Services
             await context.Trailers.AddAsync(newTrailer);
             await context.SaveChangesAsync();
 
-            return (true, "Carreta cadastrada com sucesso", newTrailer);
+            return ServiceResult<Trailer>.Ok(newTrailer, "Carreta cadastrada com sucesso");
         }
     }
 }

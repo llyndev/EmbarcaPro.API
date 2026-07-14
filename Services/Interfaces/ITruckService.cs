@@ -1,4 +1,5 @@
-﻿using EmbarcaPro.API.Dtos.Request;
+﻿using EmbarcaPro.API.Common.Results;
+using EmbarcaPro.API.Dtos.Request;
 using EmbarcaPro.API.Models;
 
 namespace EmbarcaPro.API.Services.Interfaces
@@ -9,6 +10,6 @@ namespace EmbarcaPro.API.Services.Interfaces
         // TODO: RETONAR 'TruckResponseDto'
         Task<IEnumerable<Truck>> GetAllTrucksAsync();
 
-        Task<(bool Success, string Message, Truck? Data)> AddTruckAsync(CreateTruckRequest request);
+        Task<ServiceResult<Truck>> AddTruckAsync(CreateTruckRequest request);
     }
 }

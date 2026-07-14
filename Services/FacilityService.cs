@@ -1,4 +1,5 @@
-﻿using EmbarcaPro.API.Data;
+﻿using EmbarcaPro.API.Common.Results;
+using EmbarcaPro.API.Data;
 using EmbarcaPro.API.Dtos.Request;
 using EmbarcaPro.API.Models;
 using EmbarcaPro.API.Services.Interfaces;
@@ -8,7 +9,7 @@ namespace EmbarcaPro.API.Services
 {
     public class FacilityService(ApplicationDbContext context) : IFacilityService
     {
-        public async Task<(bool Success, string Message, Facility? Facility)> AddFacilityAsync(CreateFacilityRequest request)
+        public async Task<ServiceResult<Facility>> AddFacilityAsync(CreateFacilityRequest request)
         {
 
             var address = new Address(
@@ -29,7 +30,7 @@ namespace EmbarcaPro.API.Services
             await context.Facilities.AddAsync(newFacility);
             await context.SaveChangesAsync();
 
-            return (true, "Usina cadastrada com sucesso!", newFacility);
+            return ServiceResult<Facility>.Ok(newFacility, "Usina cadastrada com sucesso!");
         }
 
     }
