@@ -15,14 +15,14 @@ namespace EmbarcaPro.API.Controller
         [Authorize(Roles = "Admin")] // TODO: Resolver para suporte adicionar
         public async Task<IActionResult> AddDriver([FromBody] CreateDriverRequest request)
         {
-            var (success, message, driver) = await driverService.AddDriverAsync(request);
+            var result = await driverService.AddDriverAsync(request);
 
-            if (!success)
+            if (!result.Success)
             {
-                return BadRequest(new { error = message });
+                return BadRequest(new { error = result.Message });
             }
 
-            return StatusCode(StatusCodes.Status201Created, new { message, driver });
+            return StatusCode(StatusCodes.Status201Created, new { message = result.Message, driver = result.Data });
         }
 
     }

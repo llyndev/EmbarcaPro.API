@@ -21,14 +21,14 @@ namespace EmbarcaPro.API.Controller
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddTruck([FromBody] CreateTruckRequest request)
         {
-            var (success, message, truck) = await truckService.AddTruckAsync(request);
+            var result = await truckService.AddTruckAsync(request);
 
-            if (!success)
+            if (!result.Success)
             {
-                return BadRequest(new { error = message });
+                return BadRequest(new { error = result.Message });
             }
 
-            return StatusCode(StatusCodes.Status201Created, new { message, truck });
+            return StatusCode(StatusCodes.Status201Created, new { message = result.Message , truck = result.Data });
         }
 
 

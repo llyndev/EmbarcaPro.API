@@ -12,14 +12,14 @@ namespace EmbarcaPro.API.Controller
         [Authorize(Roles = "admin")]
         public async Task<IActionResult> AddFacility([FromBody] CreateFacilityRequest request)
         {
-            var (success, message, facility) = await facilityService.AddFacilityAsync(request);
+            var result = await facilityService.AddFacilityAsync(request);
 
-            if (!success)
+            if (!result.Success)
             {
-                return BadRequest(new { error = message });
+                return BadRequest(new { error = result.Message });
             }
 
-            return StatusCode(StatusCodes.Status201Created, new { message, facility });
+            return StatusCode(StatusCodes.Status201Created, new { message = result.Message , facility = result.Data });
         }
 
     }

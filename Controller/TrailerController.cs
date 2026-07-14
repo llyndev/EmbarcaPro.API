@@ -11,14 +11,14 @@ namespace EmbarcaPro.API.Controller
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddTrailer([FromBody] CreateTrailerRequest request)
         {
-            var (success, message, trailer) = await trailerService.AddTrailerAsync(request);
+            var result = await trailerService.AddTrailerAsync(request);
 
-            if (!success)
+            if (!result.Success)
             {
-                return BadRequest(new { error = message });
+                return BadRequest(new { error = result.Message });
             }
 
-            return StatusCode(StatusCodes.Status201Created, new { message, trailer });
+            return StatusCode(StatusCodes.Status201Created, new { message = result.Message , trailer = result.Data });
         }
 
     }
