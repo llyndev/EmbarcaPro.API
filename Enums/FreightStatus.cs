@@ -1,4 +1,4 @@
-﻿namespace EmbarcaPro.API.Enum
+﻿namespace EmbarcaPro.API.Enums
 {
     public enum FreightStatus
     {
