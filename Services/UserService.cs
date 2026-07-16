@@ -1,14 +1,15 @@
-﻿using EmbarcaPro.API.Data;
+﻿using EmbarcaPro.API.Common.Results;
+using EmbarcaPro.API.Data;
 using EmbarcaPro.API.Dtos.Request;
 using EmbarcaPro.API.Dtos.Response;
-using EmbarcaPro.API.Enum;
+using EmbarcaPro.API.Enums;
 using EmbarcaPro.API.Models;
 using EmbarcaPro.API.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
 using System.Text;
-using Microsoft.IdentityModel.Tokens;
 
 namespace EmbarcaPro.API.Services
 {
@@ -51,7 +52,7 @@ namespace EmbarcaPro.API.Services
             }
 
             var isPasswordValid = passwordService.VerifyPassword(request.Password, user.PasswordHash);
-            if (isPasswordValid)
+            if (!isPasswordValid)
             {
                 return (false, "E-mail ou senha incorretos.", null);
             }
@@ -92,6 +93,77 @@ namespace EmbarcaPro.API.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
+        }
+
+        public async Task<List<UserResponse>> GetAllUserResponseAsync()
+        {
+            var users = await context.Users.Select(user => new UserResponse(
+                user.Id,
+                user.Name,
+                user.Email,
+                user.Role,
+                user.Active,
+                user.RegisterDate))
+                .ToListAsync();
+
+            return users;
+        }
+
+        public async Task<ServiceResult<UserResponse>> GetUserByIdResponseAsync(int id)
+        {
+            var userResponse = await context.Users
+                .Where(user => user.Id == id)
+                .Select(user => new UserResponse(
+                    user.Id,
+                    user.Name,
+                    user.Email,
+                    user.Role,
+                    user.Active,
+                    user.RegisterDate))
+                .SingleOrDefaultAsync();
+
+            if (userResponse == null)
+            {
+                return ServiceResult<UserResponse>.Fail("Usuário não existe", ErrorType.NotFound);
+            }
+
+            return ServiceResult<UserResponse>.Ok(userResponse, "");
+        }
+
+        public async Task<ServiceResult<UserResponse>> UpdateUserRoleAsync(UpdateRoleRequest request)
+        {
+
+            if (!Enum.IsDefined(request.UserRole))
+            {
+                return ServiceResult<UserResponse>.Fail("Role inválida.", ErrorType.Validation);
+            }
+
+            var user = await context.Users
+                .FirstOrDefaultAsync(u => u.Id == request.Id);
+
+            if (user == null) {
+                return ServiceResult<UserResponse>.Fail("Usuário não existe", ErrorType.NotFound);
+            }
+
+            if (user.Role == request.UserRole)
+            {
+                return ServiceResult<UserResponse>.Fail("Usuário já possui este cargo.", ErrorType.Conflict);
+            }
+
+            user.Role = request.UserRole;
+
+            await context.SaveChangesAsync();
+
+            UserResponse response = new UserResponse(
+                Id: user.Id,
+                Name: user.Name,
+                Email: user.Email,
+                Role: user.Role,
+                Active: user.Active,
+                RegisterDate: user.RegisterDate);
+
+            return ServiceResult<UserResponse>.Ok(response, "Role atualizada");
+
         }
     }
 }
