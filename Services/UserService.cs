@@ -16,7 +16,7 @@ namespace EmbarcaPro.API.Services
     public class UserService(ApplicationDbContext context, IPasswordService passwordService, IConfiguration configuration) : IUserService
     {
 
-        public async Task<(bool Success, string Message)> RegisterUserAsync(RegisterRequest request)
+        public async Task<ServiceResult<UserResponse>> RegisterUserAsync(RegisterRequest request)
         {
             var emailExists = await context.Users.AnyAsync(u => u.Email == request.Email);
 
