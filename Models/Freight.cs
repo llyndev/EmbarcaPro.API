@@ -1,4 +1,4 @@
-﻿using EmbarcaPro.API.Enum;
+﻿using EmbarcaPro.API.Enums;
 
 namespace EmbarcaPro.API.Models
 {

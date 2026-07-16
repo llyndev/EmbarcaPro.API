@@ -1,4 +1,4 @@
-﻿using EmbarcaPro.API.Enum;
+﻿using EmbarcaPro.API.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace EmbarcaPro.API.Dtos.Request

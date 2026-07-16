@@ -1,4 +1,4 @@
-﻿using EmbarcaPro.API.Enum;
+﻿using EmbarcaPro.API.Enums;
 
 namespace EmbarcaPro.API.Models
 {
@@ -13,7 +13,7 @@ namespace EmbarcaPro.API.Models
 
         public string PasswordHash { get; private set; }
 
-        public UserRole Role { get; private set; }
+        public UserRole Role { get; set; }
 
         public UserStatus Active { get; private set; }
 
