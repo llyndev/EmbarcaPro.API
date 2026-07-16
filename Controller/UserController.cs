@@ -1,7 +1,9 @@
-﻿using EmbarcaPro.API.Dtos.Request;
+﻿using EmbarcaPro.API.Common.Results;
+using EmbarcaPro.API.Dtos.Request;
 using EmbarcaPro.API.Dtos.Response;
 using EmbarcaPro.API.Models;
 using EmbarcaPro.API.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmbarcaPro.API.Controller
@@ -31,13 +33,14 @@ namespace EmbarcaPro.API.Controller
         }
 
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<User>> UpdateUserRoleAsync([FromBody] UpdateRoleRequest request)
         {
 
             var response = await userService.UpdateUserRoleAsync(request);
 
             if (!response.Success)
-            {
+            { 
                 return NotFound(new { error = response.Message });
             }
 
