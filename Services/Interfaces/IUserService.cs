@@ -7,8 +7,8 @@ namespace EmbarcaPro.API.Services.Interfaces
     public interface IUserService
     {
 
-        Task<(bool Success, string Message)> RegisterUserAsync(RegisterRequest request);
-        Task<(bool Success, string Message, LoginResponse? Data)> LoginAsync(LoginRequest request);
+        Task<ServiceResult<UserResponse>> RegisterUserAsync(RegisterRequest request);
+        Task<ServiceResult<LoginResponse>> LoginAsync(LoginRequest request);
 
         Task<List<UserResponse>> GetAllUserResponseAsync();
 
