@@ -25,12 +25,12 @@ namespace EmbarcaPro.API.Controller
                     ErrorType.Validation => BadRequest(new { error = result.Message }),
                     ErrorType.Conflict => Conflict(new { error = result.Message }),
                     ErrorType.Unauthorized => Unauthorized(new { error = result.Message }),
-                    ErrorType.Forbidden => StatusCode(StatusCodes.Status400BadRequest, new { error = result.Message }),
+                    ErrorType.Forbidden => StatusCode(StatusCodes.Status403Forbidden, new { error = result.Message }),
                     _ => BadRequest(new { error = result.Message })
                 };
             }
 
-            return StatusCode(StatusCodes.Status201Created, new { message = result.Message, freight = result.Data }); ;
+            return StatusCode(StatusCodes.Status201Created, new { message = result.Message, freight = result.Data });
         }
 
     }
