@@ -32,5 +32,17 @@ namespace EmbarcaPro.API.Controller
             return response.ToActionResult(this);
         }
 
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetFreightById([FromRoute] int id)
+        {
+
+            var response = await freightService.GetFreightById(id);
+
+            return response.ToActionResult(this);
+
+
+
+        }
+
     }
 }
