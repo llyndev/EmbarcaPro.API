@@ -6,6 +6,7 @@
         Admin = 1,
         Operacional = 2,
         Consulta = 3,
+        Suporte = 4,
 
     }
 }
