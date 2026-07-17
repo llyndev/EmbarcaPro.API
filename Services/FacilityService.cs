@@ -33,5 +33,14 @@ namespace EmbarcaPro.API.Services
             return ServiceResult<Facility>.Ok(newFacility, "Usina cadastrada com sucesso!");
         }
 
+        public async Task<List<Facility>> GetAllFacilitiesAsync()
+        {
+            var facilities = await context.Facilities
+                .AsNoTracking()
+                .ToListAsync();
+
+            return facilities;
+        }
+
     }
 }

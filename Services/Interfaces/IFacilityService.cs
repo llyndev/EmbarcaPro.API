@@ -8,6 +8,7 @@ namespace EmbarcaPro.API.Services.Interfaces
     {
 
         Task<ServiceResult<Facility>> AddFacilityAsync(CreateFacilityRequest request);
+        Task<List<Facility>> GetAllFacilitiesAsync();
 
     }
 }

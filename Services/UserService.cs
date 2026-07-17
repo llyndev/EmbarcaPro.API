@@ -5,7 +5,6 @@ using EmbarcaPro.API.Dtos.Response;
 using EmbarcaPro.API.Enums;
 using EmbarcaPro.API.Models;
 using EmbarcaPro.API.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

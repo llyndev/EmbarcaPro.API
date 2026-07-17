@@ -19,7 +19,7 @@ namespace EmbarcaPro.API.Services
 
             if (existingDriver != null)
             {
-                return ServiceResult<Driver>.Fail("Credenciais invalidas", ErrorType.Conflict);
+                return ServiceResult<Driver>.Fail("Motorista já existe.", ErrorType.Conflict);
             }
 
             var address = new Address(
@@ -43,6 +43,15 @@ namespace EmbarcaPro.API.Services
             await context.SaveChangesAsync();
 
             return ServiceResult<Driver>.Ok(driver, "Motorista cadastrado com sucesso!");
+        }
+
+        public async Task<List<Driver>> GetAllDriversAsync()
+        {
+            var drivers = await context.Drivers
+                .AsNoTracking()
+                .ToListAsync();
+
+            return drivers;
         }
     }
 }

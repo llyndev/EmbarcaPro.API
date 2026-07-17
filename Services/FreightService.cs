@@ -81,7 +81,7 @@ namespace EmbarcaPro.API.Services
             return ServiceResult<Freight>.Ok(newFreight, "Viagem criada com sucesso!");
         }
 
-        public async Task<ServiceResult<PagedList<FreightResponse>>> GetAllFreightsAsync(int page = 1, int pageSize = 10)
+        public async Task<ServiceResult<PagedList<FreightResponse>>> GetAllFreightsAsync(int page, int pageSize)
         {
             var query = context.Freights
                 .Include(f => f.Driver)
