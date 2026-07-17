@@ -123,5 +123,32 @@ namespace EmbarcaPro.API.Services
             return ServiceResult<PagedList<FreightResponse>>.Ok(pagedList, "Fretes listados com sucesso.");
         }
 
+        public async Task<ServiceResult<FreightResponse>> GetFreightById(int id)
+        {
+            var response = await context.Freights
+                .AsNoTracking()
+                .Where(f => f.Id == id)
+                .Select(f => new FreightResponse(
+                    f.Id,
+                    f.Driver.Name,
+                    f.Truck.LicensePlate,
+                    f.Trailer.LicensePlate,
+                    f.OriginFacility.Address.City,
+                    f.DestinationFacility.Address.City,
+                    f.CargoDescription,
+                    f.Status.ToString(),
+                    f.FreightValue,
+                    f.CreatedAt
+                ))
+                .FirstOrDefaultAsync();
+
+            if (response == null)
+            {
+                return ServiceResult<FreightResponse>.Fail("Viagem não encontrada", ErrorType.NotFound);
+            }
+
+            return ServiceResult<FreightResponse>.Ok(response, $"Viagem {id}");
+        }
+
     }
 }
