@@ -29,7 +29,7 @@ namespace EmbarcaPro.API.Controller
                 return NotFound(new { error = response.Message });
             }
 
-            return Ok(response);
+            return Ok(response.Data);
         }
 
         [HttpPut]
@@ -44,7 +44,7 @@ namespace EmbarcaPro.API.Controller
                 return NotFound(new { error = response.Message });
             }
 
-            return Ok(response);
+            return Ok(response.Data);
 
         }
 

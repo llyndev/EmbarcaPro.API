@@ -15,9 +15,7 @@ namespace EmbarcaPro.API.Controller
         {
             var result = await userService.RegisterUserAsync(request);
 
-            return result.ToActionResult(
-                this,
-                StatusCodes.Status201Created);
+            return result.ToActionResult(this, StatusCodes.Status201Created);
         }
 
         [HttpPost("login")]
@@ -25,8 +23,7 @@ namespace EmbarcaPro.API.Controller
         {
             var result = await userService.LoginAsync(request);
 
-            return result.ToActionResult(
-                this);
+            return result.ToActionResult(this);
 
         }
 

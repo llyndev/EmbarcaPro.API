@@ -1,15 +1,19 @@
 ﻿using EmbarcaPro.API.Dtos.Request;
-using EmbarcaPro.API.Services;
+using EmbarcaPro.API.Enums;
+using EmbarcaPro.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EmbarcaPro.API.Controller
 {
-    public class FacilityController(FacilityService facilityService) : ControllerBase
+    [ApiController]
+    [Route("api/facility")]
+    [Authorize]
+    public class FacilityController(IFacilityService facilityService) : ControllerBase
     {
 
         [HttpPost]
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = nameof(UserRole.Admin))]
         public async Task<IActionResult> AddFacility([FromBody] CreateFacilityRequest request)
         {
             var result = await facilityService.AddFacilityAsync(request);

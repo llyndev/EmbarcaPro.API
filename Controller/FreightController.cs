@@ -1,5 +1,9 @@
-﻿using EmbarcaPro.API.Common.Results;
+﻿using EmbarcaPro.API.Common.Pagination;
+using EmbarcaPro.API.Common.Results;
 using EmbarcaPro.API.Dtos.Request;
+using EmbarcaPro.API.Enums;
+using EmbarcaPro.API.Extensions;
+using EmbarcaPro.API.Models;
 using EmbarcaPro.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +17,7 @@ namespace EmbarcaPro.API.Controller
     {
 
         [HttpPost]
+        [Authorize(Roles = nameof(UserRole.Admin))]
         public async Task<IActionResult> CreateFreight([FromBody] CreateFreightRequest request)
         {
             var result = await freightService.CreateFreightAsync(request);
@@ -31,6 +36,15 @@ namespace EmbarcaPro.API.Controller
             }
 
             return StatusCode(StatusCodes.Status201Created, new { message = result.Message, freight = result.Data });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllFreightsAsync([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        {
+
+            var response = await freightService.GetAllFreightsAsync(page, pageSize);
+
+            return response.ToActionResult(this);
         }
 
     }
