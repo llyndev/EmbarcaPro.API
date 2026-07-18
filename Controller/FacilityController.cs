@@ -1,5 +1,6 @@
 ﻿using EmbarcaPro.API.Dtos.Request;
 using EmbarcaPro.API.Enums;
+using EmbarcaPro.API.Extensions;
 using EmbarcaPro.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,17 +14,12 @@ namespace EmbarcaPro.API.Controller
     {
 
         [HttpPost]
-        [Authorize(Roles = nameof(UserRole.Admin))]
+        [Authorize(Roles = nameof(UserRole.Admin) + "," + nameof(UserRole.Suporte))]
         public async Task<IActionResult> AddFacility([FromBody] CreateFacilityRequest request)
         {
             var result = await facilityService.AddFacilityAsync(request);
 
-            if (!result.Success)
-            {
-                return BadRequest(new { error = result.Message });
-            }
-
-            return StatusCode(StatusCodes.Status201Created, new { message = result.Message , facility = result.Data });
+            return result.ToActionResult(this, StatusCodes.Status201Created);
         }
 
     }

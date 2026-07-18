@@ -1,7 +1,6 @@
-﻿using EmbarcaPro.API.Common.Results;
-using EmbarcaPro.API.Dtos.Request;
-using EmbarcaPro.API.Dtos.Response;
-using EmbarcaPro.API.Models;
+﻿using EmbarcaPro.API.Dtos.Request;
+using EmbarcaPro.API.Enums;
+using EmbarcaPro.API.Extensions;
 using EmbarcaPro.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,41 +9,33 @@ namespace EmbarcaPro.API.Controller
 {
     [ApiController]
     [Route("api/users")]
+    [Authorize]
     public class UserController(IUserService userService) : ControllerBase 
     {
         [HttpGet]
-        public async Task<ActionResult<List<UserResponse>>> GetAllUserResponseAsync()
+        public async Task<IActionResult> GetAllUserResponseAsync()
         {
-            List<UserResponse> response = await userService.GetAllUserResponseAsync();
+            var result = await userService.GetAllUserResponseAsync();
 
-            return Ok(response);
+            return Ok(result);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<UserResponse>> GetUserByIdResponseAsync([FromRoute] int id)
+        public async Task<IActionResult> GetUserByIdResponseAsync([FromRoute] int id)
         {
-            var response = await userService.GetUserByIdResponseAsync(id);
+            var result = await userService.GetUserByIdResponseAsync(id);
 
-            if (!response.Success) {
-                return NotFound(new { error = response.Message });
-            }
-
-            return Ok(response.Data);
+            return result.ToActionResult(this);
         }
 
         [HttpPut]
-        [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<User>> UpdateUserRoleAsync([FromBody] UpdateRoleRequest request)
+        [Authorize(Roles = nameof(UserRole.Admin) + "," + nameof(UserRole.Suporte))]
+        public async Task<IActionResult> UpdateUserRoleAsync([FromBody] UpdateRoleRequest request)
         {
 
-            var response = await userService.UpdateUserRoleAsync(request);
+            var result = await userService.UpdateUserRoleAsync(request);
 
-            if (!response.Success)
-            { 
-                return NotFound(new { error = response.Message });
-            }
-
-            return Ok(response.Data);
+            return result.ToActionResult(this);
 
         }
 

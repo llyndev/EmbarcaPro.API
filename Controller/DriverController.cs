@@ -1,6 +1,6 @@
 ﻿using EmbarcaPro.API.Dtos.Request;
 using EmbarcaPro.API.Enums;
-using EmbarcaPro.API.Models;
+using EmbarcaPro.API.Extensions;
 using EmbarcaPro.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,16 +19,11 @@ namespace EmbarcaPro.API.Controller
         {
             var result = await driverService.AddDriverAsync(request);
 
-            if (!result.Success)
-            {
-                return BadRequest(new { error = result.Message });
-            }
-
-            return StatusCode(StatusCodes.Status201Created, new { message = result.Message, driver = result.Data });
+            return result.ToActionResult(this, StatusCodes.Status201Created);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<Driver>>> GetAllDriversAsync()
+        public async Task<IActionResult> GetAllDriversAsync()
         {
             var response = await driverService.GetAllDriversAsync();
 
