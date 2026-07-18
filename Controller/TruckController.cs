@@ -29,6 +29,14 @@ namespace EmbarcaPro.API.Controller
             return result.ToActionResult(this, StatusCodes.Status201Created);
         }
 
+        [HttpGet("{plate}")]
+        public async Task<IActionResult> GetTruckByPlateAsync(string plate)
+        {
+            var result = await truckService.GetTruckByPlateAsync(plate);
+
+            return result.ToActionResult(this);
+        }
+
 
     }
 }

@@ -38,8 +38,19 @@ namespace EmbarcaPro.API.Services
 
             return ServiceResult<Truck>.Ok(truck, "Caminhão cadastrado na frota com sucesso!");
 
+        }
 
-        
+        public async Task<ServiceResult<Truck>> GetTruckByPlateAsync(string plate)
+        {
+
+            var licensePlate = await context.Trucks.FirstOrDefaultAsync(t => t.LicensePlate == plate);
+
+            if (licensePlate == null)
+            {
+                return ServiceResult<Truck>.Fail("Caminhão não encontrado com esta placa.", ErrorType.NotFound);
+            }
+
+            return ServiceResult<Truck>.Ok(licensePlate, "Caminhão encontrado");
         }
 
     }

@@ -11,5 +11,7 @@ namespace EmbarcaPro.API.Services.Interfaces
         Task<IEnumerable<Truck>> GetAllTrucksAsync();
 
         Task<ServiceResult<Truck>> AddTruckAsync(CreateTruckRequest request);
+
+        Task<ServiceResult<Truck>> GetTruckByPlateAsync(string plate);
     }
 }

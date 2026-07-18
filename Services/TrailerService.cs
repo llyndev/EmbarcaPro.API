@@ -27,13 +27,31 @@ namespace EmbarcaPro.API.Services
                 brand: request.Brand,
                 maxCapacityKg: request.MaxCapacityKg,
                 cubicMetersVolume: request.CubicMetersVolume
-                
+
             );
 
             await context.Trailers.AddAsync(newTrailer);
             await context.SaveChangesAsync();
 
             return ServiceResult<Trailer>.Ok(newTrailer, "Carreta cadastrada com sucesso");
+        }
+
+        public async Task<ServiceResult<Trailer>> GetTrailerByPlateAsync(string plate)
+        {
+            var licensePlate = await context.Trailers.FirstOrDefaultAsync(t => t.LicensePlate == plate);
+
+            if (licensePlate == null)
+            {
+
+                return ServiceResult<Trailer>.Fail("Carreta não encontrada com esta placa.", ErrorType.NotFound);
+            }
+
+            return ServiceResult<Trailer>.Ok(licensePlate, "Carreta encontrada.");
+        }
+
+        public async Task<IEnumerable<Trailer>> GetAllTrailersAsync()
+        {
+            return await context.Trailers.ToListAsync();
         }
     }
 }
