@@ -59,7 +59,7 @@ namespace EmbarcaPro.API.Services
 
             if (string.IsNullOrWhiteSpace(name))
             {
-                return ServiceResult<List<Driver>>.Fail("Motorista não encontrado.", ErrorType.Validation);
+                return ServiceResult<List<Driver>>.Fail("O nome da busca não pode estar vazio.", ErrorType.Validation);
             }
 
             var drivers = await context.Drivers
