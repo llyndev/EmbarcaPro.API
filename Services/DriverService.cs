@@ -53,5 +53,26 @@ namespace EmbarcaPro.API.Services
 
             return drivers;
         }
+
+        public async Task<ServiceResult<List<Driver>>> GetDriverByName(string name)
+        {
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return ServiceResult<List<Driver>>.Fail("Motorista não encontrado.", ErrorType.Validation);
+            }
+
+            var drivers = await context.Drivers
+                .AsNoTracking()
+                .Where(d => d.Name.Contains(name))
+                .ToListAsync();
+
+            if (!drivers.Any()) 
+            {
+                return ServiceResult<List<Driver>>.Fail("Nenhum motorista encontrado com este nome.", ErrorType.NotFound);
+            }
+
+            return ServiceResult<List<Driver>>.Ok(drivers, "Motorista");
+        }
     }
 }

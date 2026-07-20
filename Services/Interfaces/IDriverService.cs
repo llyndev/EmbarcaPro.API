@@ -8,5 +8,6 @@ namespace EmbarcaPro.API.Services.Interfaces
     {
         Task<ServiceResult<Driver>> AddDriverAsync(CreateDriverRequest request);
         Task<List<Driver>> GetAllDriversAsync();
+        Task<ServiceResult<List<Driver>>> GetDriverByName(string name);
     }
 }

@@ -25,9 +25,24 @@ namespace EmbarcaPro.API.Controller
         [HttpGet]
         public async Task<IActionResult> GetAllDriversAsync()
         {
-            var response = await driverService.GetAllDriversAsync();
+            var drivers = await driverService.GetAllDriversAsync();
 
-            return Ok(response);
+            return Ok(drivers);
+        }
+
+        [HttpGet("name")]
+        public async Task<IActionResult> GetDriversAsync([FromQuery] string? name)
+        {
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                var drivers = await driverService.GetAllDriversAsync();
+                return Ok(drivers);
+            }
+
+            var driver = await driverService.GetDriverByName(name);
+
+            return driver.ToActionResult(this);
         }
 
     }
