@@ -42,5 +42,29 @@ namespace EmbarcaPro.API.Controller
 
         }
 
+        [HttpPut("{id}/start")]
+        public async Task<IActionResult> StartFreight(int id)
+        {
+            var response = await freightService.StartTripAsync(id);
+
+            return response.ToActionResult(this);
+        }
+
+        [HttpPut("/{id}/finish")]
+        public async Task<IActionResult> FinishFreight(int id)
+        {
+            var response = await freightService.FinishTripAsync(id);
+
+            return response.ToActionResult(this);
+        }
+
+        [HttpPut("/{id}/cancel")]
+        public async Task<IActionResult> CancelFreight(int id)
+        {
+            var response = await freightService.CancelTripAsyncs(id);
+
+            return response.ToActionResult(this);
+        }
+
     }
 }

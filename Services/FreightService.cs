@@ -3,6 +3,7 @@ using EmbarcaPro.API.Common.Results;
 using EmbarcaPro.API.Data;
 using EmbarcaPro.API.Dtos.Request;
 using EmbarcaPro.API.Dtos.Response;
+using EmbarcaPro.API.Enums;
 using EmbarcaPro.API.Models;
 using EmbarcaPro.API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -148,6 +149,87 @@ namespace EmbarcaPro.API.Services
             }
 
             return ServiceResult<FreightResponse>.Ok(response, $"Viagem {id}");
+        }
+
+        public async Task<ServiceResult<FreightResponse>> StartTripAsync(int id)
+        {
+            var response = await context.Freights
+                .AsNoTracking()
+                .Where(f => f.Id == id)
+                .Select(f => new FreightResponse(
+                    f.Id,
+                    f.Driver.Name,
+                    f.Truck.LicensePlate,
+                    f.Trailer.LicensePlate,
+                    f.OriginFacility.Address.City,
+                    f.DestinationFacility.Address.City,
+                    f.CargoDescription,
+                    f.Status.ToString(),
+                    f.FreightValue,
+                    f.CreatedAt
+                ))
+                .FirstOrDefaultAsync();
+
+            if (response == null)
+            {
+                return ServiceResult<FreightResponse>.Fail("Viagem não encontrada.", ErrorType.NotFound);
+            }
+
+            return ServiceResult<FreightResponse>.Ok(response, $"Viagem{id}");
+        }
+
+        public async Task<ServiceResult<FreightResponse>> FinishTripAsync(int id)
+        {
+            var response = await context.Freights
+                .AsNoTracking()
+                .Where(f => f.Id == id)
+                .Select(f => new FreightResponse(
+                    f.Id,
+                    f.Driver.Name,
+                    f.Truck.LicensePlate,
+                    f.Trailer.LicensePlate,
+                    f.OriginFacility.Address.City,
+                    f.DestinationFacility.Address.City,
+                    f.CargoDescription,
+                    f.Status.ToString(),
+                    f.FreightValue,
+                    f.CreatedAt
+                ))
+                .FirstOrDefaultAsync();
+
+            if (response == null)
+            {
+                return ServiceResult<FreightResponse>.Fail("Viagem não encontrada.", ErrorType.NotFound);
+            }
+
+            return ServiceResult<FreightResponse>.Ok(response, $"Viagem{id}");
+        }
+
+        public async Task<ServiceResult<FreightResponse>> CancelTripAsyncs(int id)
+        {
+            var response = await context.Freights
+                .AsNoTracking()
+                .Where(f => f.Id == id)
+                .Select(f => new FreightResponse(
+                    f.Id,
+                    f.Driver.Name,
+                    f.Truck.LicensePlate,
+                    f.Trailer.LicensePlate,
+                    f.OriginFacility.Address.City,
+                    f.DestinationFacility.Address.City,
+                    f.CargoDescription,
+                    f.Status.ToString(),
+                    f.FreightValue,
+                    f.CreatedAt
+                ))
+                .FirstOrDefaultAsync();
+
+            if (response == null)
+            {
+                return ServiceResult<FreightResponse>.Fail("Viagem não encontrada.", ErrorType.NotFound);
+            }
+
+            return ServiceResult<FreightResponse>.Ok(response, $"Viagem{id}");
         }
 
     }

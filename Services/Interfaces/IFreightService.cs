@@ -11,5 +11,8 @@ namespace EmbarcaPro.API.Services.Interfaces
         Task<ServiceResult<FreightResponse>> CreateFreightAsync(CreateFreightRequest request);
         Task<ServiceResult<PagedList<FreightResponse>>> GetAllFreightsAsync(int page, int pageSize);
         Task<ServiceResult<FreightResponse>> GetFreightById(int id);
+        Task<ServiceResult<FreightResponse>> StartTripAsync(int id);
+        Task<ServiceResult<FreightResponse>> FinishTripAsync(int id);
+        Task<ServiceResult<FreightResponse>> CancelTripAsyncs(int id);
     }
 }
