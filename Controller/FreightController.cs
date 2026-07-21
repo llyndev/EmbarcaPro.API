@@ -50,7 +50,7 @@ namespace EmbarcaPro.API.Controller
             return response.ToActionResult(this);
         }
 
-        [HttpPut("/{id}/finish")]
+        [HttpPut("{id}/finish")]
         public async Task<IActionResult> FinishFreight(int id)
         {
             var response = await freightService.FinishTripAsync(id);
@@ -58,7 +58,7 @@ namespace EmbarcaPro.API.Controller
             return response.ToActionResult(this);
         }
 
-        [HttpPut("/{id}/cancel")]
+        [HttpPut("{id}/cancel")]
         public async Task<IActionResult> CancelFreight(int id)
         {
             var response = await freightService.CancelTripAsyncs(id);

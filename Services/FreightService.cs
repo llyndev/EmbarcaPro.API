@@ -153,81 +153,127 @@ namespace EmbarcaPro.API.Services
 
         public async Task<ServiceResult<FreightResponse>> StartTripAsync(int id)
         {
-            var response = await context.Freights
-                .AsNoTracking()
-                .Where(f => f.Id == id)
-                .Select(f => new FreightResponse(
-                    f.Id,
-                    f.Driver.Name,
-                    f.Truck.LicensePlate,
-                    f.Trailer.LicensePlate,
-                    f.OriginFacility.Address.City,
-                    f.DestinationFacility.Address.City,
-                    f.CargoDescription,
-                    f.Status.ToString(),
-                    f.FreightValue,
-                    f.CreatedAt
-                ))
-                .FirstOrDefaultAsync();
+            var freight = await context.Freights
+                .Include(f => f.Driver)
+                .Include(f => f.Truck)
+                .Include(f => f.Trailer)
+                .Include(f => f.OriginFacility)
+                .Include(f => f.DestinationFacility)
+                .FirstOrDefaultAsync(f => f.Id == id);
 
-            if (response == null)
+            if (freight == null)
             {
                 return ServiceResult<FreightResponse>.Fail("Viagem não encontrada.", ErrorType.NotFound);
             }
+
+            try
+            {
+                freight.StartTrip();
+            }
+            catch(InvalidOperationException ex)
+            {
+                return ServiceResult<FreightResponse>.Fail(ex.Message, ErrorType.Validation);
+            }
+
+            await context.SaveChangesAsync();
+
+            // TODO: CRIAR ToResponse para não repetir.
+            var response = new FreightResponse(
+                freight.Id,
+                freight.Driver.Name,
+                freight.Truck.LicensePlate,
+                freight.Trailer.LicensePlate,
+                freight.OriginFacility.Address.City,
+                freight.DestinationFacility.Address.City,
+                freight.CargoDescription,
+                freight.Status.ToString(),
+                freight.FreightValue,
+                freight.CreatedAt
+            );
 
             return ServiceResult<FreightResponse>.Ok(response, $"Viagem{id}");
         }
 
         public async Task<ServiceResult<FreightResponse>> FinishTripAsync(int id)
         {
-            var response = await context.Freights
-                .AsNoTracking()
-                .Where(f => f.Id == id)
-                .Select(f => new FreightResponse(
-                    f.Id,
-                    f.Driver.Name,
-                    f.Truck.LicensePlate,
-                    f.Trailer.LicensePlate,
-                    f.OriginFacility.Address.City,
-                    f.DestinationFacility.Address.City,
-                    f.CargoDescription,
-                    f.Status.ToString(),
-                    f.FreightValue,
-                    f.CreatedAt
-                ))
-                .FirstOrDefaultAsync();
+            var freight = await context.Freights
+                .Include(f => f.Driver)
+                .Include(f => f.Truck)
+                .Include(f => f.Trailer)
+                .Include(f => f.OriginFacility)
+                .Include(f => f.DestinationFacility)
+                .FirstOrDefaultAsync(f => f.Id == id);
 
-            if (response == null)
+            if (freight == null)
             {
                 return ServiceResult<FreightResponse>.Fail("Viagem não encontrada.", ErrorType.NotFound);
             }
+
+            try
+            {
+                freight.FinishTrip();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return ServiceResult<FreightResponse>.Fail(ex.Message, ErrorType.Validation);
+            }
+
+            await context.SaveChangesAsync();
+
+            var response = new FreightResponse(
+                freight.Id,
+                freight.Driver.Name,
+                freight.Truck.LicensePlate,
+                freight.Trailer.LicensePlate,
+                freight.OriginFacility.Address.City,
+                freight.DestinationFacility.Address.City,
+                freight.CargoDescription,
+                freight.Status.ToString(),
+                freight.FreightValue,
+                freight.CreatedAt
+            );
 
             return ServiceResult<FreightResponse>.Ok(response, $"Viagem{id}");
         }
 
         public async Task<ServiceResult<FreightResponse>> CancelTripAsyncs(int id)
         {
-            var response = await context.Freights
-                .AsNoTracking()
-                .Where(f => f.Id == id)
-                .Select(f => new FreightResponse(
-                    f.Id,
-                    f.Driver.Name,
-                    f.Truck.LicensePlate,
-                    f.Trailer.LicensePlate,
-                    f.OriginFacility.Address.City,
-                    f.DestinationFacility.Address.City,
-                    f.CargoDescription,
-                    f.Status.ToString(),
-                    f.FreightValue,
-                    f.CreatedAt
-                ))
-                .FirstOrDefaultAsync();
+            var freight = await context.Freights
+                .Include(f => f.Driver)
+                .Include(f => f.Truck)
+                .Include(f => f.Trailer)
+                .Include(f => f.OriginFacility)
+                .Include(f => f.DestinationFacility)
+                .FirstOrDefaultAsync(f => f.Id == id);
 
-            if (response == null)
+            if (freight == null)
             {
                 return ServiceResult<FreightResponse>.Fail("Viagem não encontrada.", ErrorType.NotFound);
             }
+
+            try
+            {
+                freight.CancelTrip();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return ServiceResult<FreightResponse>.Fail(ex.Message, ErrorType.Validation);
+            }
+
+            await context.SaveChangesAsync();
+
+            var response = new FreightResponse(
+                freight.Id,
+                freight.Driver.Name,
+                freight.Truck.LicensePlate,
+                freight.Trailer.LicensePlate,
+                freight.OriginFacility.Address.City,
+                freight.DestinationFacility.Address.City,
+                freight.CargoDescription,
+                freight.Status.ToString(),
+                freight.FreightValue,
+                freight.CreatedAt
+            );
 
             return ServiceResult<FreightResponse>.Ok(response, $"Viagem{id}");
         }
