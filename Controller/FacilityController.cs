@@ -31,7 +31,7 @@ namespace EmbarcaPro.API.Controller
         }
 
         [HttpGet("cpnj")]
-        public async Task<IActionResult> GetFacilityByCnpj(string cnpj)
+        public async Task<IActionResult> GetFacilityByCnpj([FromQuery] string cnpj)
         {
             var result = await facilityService.GetFacilityByCnpjAsnyc(cnpj);
 
@@ -39,7 +39,7 @@ namespace EmbarcaPro.API.Controller
         }
 
         [HttpGet("name")]
-        public async Task<IActionResult> GetFacilitiesByName(string name)
+        public async Task<IActionResult> GetFacilitiesByName([FromQuery] string name)
         {
 
             var result = await facilityService.GetFacilitiesByNameAsync(name);
