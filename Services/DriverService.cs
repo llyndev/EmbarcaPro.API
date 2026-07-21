@@ -54,7 +54,26 @@ namespace EmbarcaPro.API.Services
             return drivers;
         }
 
-        public async Task<ServiceResult<List<Driver>>> GetDriverByName(string name)
+        public async Task<ServiceResult<Driver>> GetDriverByCpfAsync(string cpf)
+        {
+            if (string.IsNullOrWhiteSpace(cpf))
+            {
+                return ServiceResult<Driver>.Fail("O CPF da busca não pode estar vazio.", ErrorType.Validation);
+            }
+
+            var driver = await context.Drivers
+                .AsNoTracking()
+                .FirstOrDefaultAsync(d => d.Cpf == cpf.Replace(".", "").Replace("-", ""));
+
+            if (driver == null)
+            {
+                return ServiceResult<Driver>.Fail("Nenhum motorista encontrado com esse CPF.", ErrorType.NotFound);
+            }
+
+            return ServiceResult<Driver>.Ok(driver, "Motorista");
+        }
+
+        public async Task<ServiceResult<List<Driver>>> GetDriverByNameAsync(string name)
         {
 
             if (string.IsNullOrWhiteSpace(name))

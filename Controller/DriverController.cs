@@ -30,17 +30,19 @@ namespace EmbarcaPro.API.Controller
             return Ok(drivers);
         }
 
+        [HttpGet("cpf")]
+        public async Task<IActionResult> GetDriversByCpfAsync([FromQuery] string cpf)
+        {
+            var driver = await driverService.GetDriverByCpfAsync(cpf);
+
+            return driver.ToActionResult(this);
+        }
+
         [HttpGet("name")]
-        public async Task<IActionResult> GetDriversAsync([FromQuery] string? name)
+        public async Task<IActionResult> GetDriversAsync([FromQuery] string name)
         {
 
-            if (string.IsNullOrWhiteSpace(name))
-            {
-                var drivers = await driverService.GetAllDriversAsync();
-                return Ok(drivers);
-            }
-
-            var driver = await driverService.GetDriverByName(name);
+            var driver = await driverService.GetDriverByNameAsync(name);
 
             return driver.ToActionResult(this);
         }
