@@ -1,10 +1,19 @@
-﻿namespace EmbarcaPro.API.Enums
+﻿using System.ComponentModel;
+
+namespace EmbarcaPro.API.Enums
 {
     public enum FreightStatus
     {
-        Pending = 1, // Aguardando carregamento
-        InTransit = 2, // Em trânsito
-        Delivered = 3, // Entregue
-        Canceled = 4 // Cancelado
+        [Description("Pendente")]
+        Pending,
+
+        [Description("Em Trânsito")]
+        InTransit,
+
+        [Description("Entregue")]
+        Delivered,
+
+        [Description("Cancelado")]
+        Canceled
     }
 }

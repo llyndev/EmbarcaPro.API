@@ -1,11 +1,17 @@
-﻿namespace EmbarcaPro.API.Enums
+﻿using System.ComponentModel;
+
+namespace EmbarcaPro.API.Enums
 {
     public enum UserStatus
     {
+        [Description("Pendente")]
+        Pending,
 
-        Pending = 1,
-        Active = 2,
-        Blocked = 3,
+        [Description("Ativo")]
+        Active,
+
+        [Description("Bloqueado")]
+        Blocked
 
     }
 }

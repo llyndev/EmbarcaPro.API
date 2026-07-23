@@ -1,12 +1,20 @@
-﻿namespace EmbarcaPro.API.Enums
+﻿using System.ComponentModel;
+
+namespace EmbarcaPro.API.Enums
 {
     public enum UserRole
     {
+        [Description("Administrador")]
+        Admin,
 
-        Admin = 1,
-        Operacional = 2,
-        Consulta = 3,
-        Suporte = 4,
+        [Description("Operacional")]
+        Operacional,
+
+        [Description("Consulta")]
+        Consulta,
+
+        [Description("Suporte")]
+        Suporte
 
     }
 }

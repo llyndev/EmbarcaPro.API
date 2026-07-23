@@ -1,13 +1,23 @@
-﻿namespace EmbarcaPro.API.Enums
+﻿using System.ComponentModel;
+
+namespace EmbarcaPro.API.Enums
 {
     public enum TrailerType
     {
+        [Description("Báu carga seca")]
+        DryBox,
 
-        DryBox = 1, // Báu seco
-        Refrigerated = 2, // Frigorifíca (Refrigerado)
-        Bulk = 3, // Graneleiro
-        CurtainSider = 4, // Sider
-        Flatbed = 5 // Prancha / Carga seca aberta
+        [Description("Frigorifíca e Refrigerados")]
+        Refrigerated,
+
+        [Description("Graneleiro")]
+        Bulk,
+
+        [Description("Sider")]
+        CurtainSider,
+
+        [Description("Prancha e Carga seca aberta")]
+        Flatbed
 
     }
 }
