@@ -7,7 +7,7 @@ namespace EmbarcaPro.API.Controllers
 {
     [ApiController]
     [Route("/api/auth")]
-    public class AuthController(IUserService userService) : ControllerBase
+    public class AuthController(IUserService userService) : Controller
     {
 
         [HttpPost("register")] // api/auth/register

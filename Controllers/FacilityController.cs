@@ -10,7 +10,7 @@ namespace EmbarcaPro.API.Controllers
     [ApiController]
     [Route("api/facility")]
     [Authorize]
-    public class FacilityController(IFacilityService facilityService) : ControllerBase
+    public class FacilityController(IFacilityService facilityService) : Controller
     {
 
         [HttpPost]

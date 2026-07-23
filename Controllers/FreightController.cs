@@ -11,7 +11,7 @@ namespace EmbarcaPro.API.Controllers
     [ApiController]
     [Route("api/freights")]
     [Authorize]
-    public class FreightController(IFreightService freightService) : ControllerBase
+    public class FreightController(IFreightService freightService) : Controller
     {
 
         [HttpPost]

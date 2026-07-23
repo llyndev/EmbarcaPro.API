@@ -11,7 +11,7 @@ namespace EmbarcaPro.API.Controllers
     [ApiController]
     [Route("/api/trailer")]
     [Authorize]
-    public class TrailerController(ITrailerService trailerService) : ControllerBase
+    public class TrailerController(ITrailerService trailerService) : Controller
     {
         [HttpPost]
         [Authorize(Roles = nameof(UserRole.Admin) + "," + nameof(UserRole.Suporte))]

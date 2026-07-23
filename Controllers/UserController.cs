@@ -10,7 +10,7 @@ namespace EmbarcaPro.API.Controllers
     [ApiController]
     [Route("api/users")]
     [Authorize]
-    public class UserController(IUserService userService) : ControllerBase 
+    public class UserController(IUserService userService) : Controller
     {
         [HttpGet]
         public async Task<IActionResult> GetAllUserResponseAsync()

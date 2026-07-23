@@ -10,7 +10,7 @@ namespace EmbarcaPro.API.Controllers
     [ApiController]
     [Route("api/drivers")]
     [Authorize]
-    public class DriverController(IDriverService driverService) : ControllerBase
+    public class DriverController(IDriverService driverService) : Controller
     {
 
         [HttpPost]

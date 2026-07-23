@@ -10,7 +10,7 @@ namespace EmbarcaPro.API.Controllers
     [ApiController]
     [Route("api/trucks")]
     [Authorize]
-    public class TruckController(ITruckService truckService) : ControllerBase
+    public class TruckController(ITruckService truckService) : Controller
     {
         [HttpGet]
         public async Task<IActionResult> GetAllTrucks()
