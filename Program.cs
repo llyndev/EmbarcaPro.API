@@ -63,7 +63,7 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings.GetValue<string>("Secret");
-var key = Encoding.ASCII.GetBytes(secretKey!);
+var key = Encoding.UTF8.GetBytes(secretKey!);
 
 builder.Services.AddAuthentication(options =>
 {
