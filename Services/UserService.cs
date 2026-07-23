@@ -58,15 +58,22 @@ namespace EmbarcaPro.API.Services
 
             // Verificar se o usuário existe no banco
             var user = await context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+
             if (user == null)
             {
                 return ServiceResult<LoginResponse>.Fail("E-mail ou senha incorretos.", ErrorType.Validation);
             }
 
             var isPasswordValid = passwordService.VerifyPassword(request.Password, user.PasswordHash);
+
             if (!isPasswordValid)
             {
                 return ServiceResult<LoginResponse>.Fail("E-mail ou senha incorretos.", ErrorType.Validation);
+            }
+
+            if (user.Active != UserStatus.Active)
+            {
+                return ServiceResult<LoginResponse>.Fail("Usuário inativo", ErrorType.Validation);
             }
 
             var token = GenerateJwtToken(user);
