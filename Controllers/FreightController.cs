@@ -6,7 +6,7 @@ using EmbarcaPro.API.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EmbarcaPro.API.Controller
+namespace EmbarcaPro.API.Controllers
 {
     [ApiController]
     [Route("api/freights")]

@@ -3,7 +3,7 @@ using EmbarcaPro.API.Extensions;
 using EmbarcaPro.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EmbarcaPro.API.Controller
+namespace EmbarcaPro.API.Controllers
 {
     [ApiController]
     [Route("/api/auth")]
