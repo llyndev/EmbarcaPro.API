@@ -37,6 +37,7 @@ namespace EmbarcaPro.API.Configurations
             .IsRequired();
 
             builder.Property(user => user.Active)
+            .HasConversion<string>()
             .HasColumnName("active");
 
             builder.Property(user => user.RegisterDate)
