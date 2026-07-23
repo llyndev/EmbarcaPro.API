@@ -5,7 +5,9 @@ using EmbarcaPro.API.Dtos.Response;
 using EmbarcaPro.API.Enums;
 using EmbarcaPro.API.Models;
 using EmbarcaPro.API.Services.Interfaces;
+using EmbarcaPro.API.Settings;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -13,8 +15,10 @@ using System.Text;
 
 namespace EmbarcaPro.API.Services
 {
-    public class UserService(ApplicationDbContext context, IPasswordService passwordService, IConfiguration configuration) : IUserService
+    public class UserService(ApplicationDbContext context, IPasswordService passwordService, IOptions<JwtSettings> jwtOptions) : IUserService
     {
+        private readonly JwtSettings _jwtSettings = jwtOptions.Value;
+
 
         public async Task<ServiceResult<UserResponse>> RegisterUserAsync(RegisterRequest request)
         {
@@ -74,11 +78,10 @@ namespace EmbarcaPro.API.Services
         
         private string GenerateJwtToken(User user)
         {
-            var jwtSettings = configuration.GetSection("JwtSettings");
-            var secretKey = jwtSettings.GetValue<string>("Secret")
-                ?? throw new InvalidOperationException("JWT Secret não configurada.");
+            if (string.IsNullOrWhiteSpace(_jwtSettings.Secret))
+                throw new InvalidOperationException("JWT Secret não configurada.");
 
-            var key = Encoding.UTF8.GetBytes(secretKey);
+            var key = Encoding.UTF8.GetBytes(_jwtSettings.Secret);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -89,9 +92,9 @@ namespace EmbarcaPro.API.Services
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(ClaimTypes.Role, user.Role.ToString())
                 }),
-                Expires = DateTime.UtcNow.AddMinutes(jwtSettings.GetValue<int>("ExpiryInMinutes")),
-                Issuer = jwtSettings.GetValue<string>("Issuer"),
-                Audience = jwtSettings.GetValue<string>("Audience"),
+                Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryInMinutes),
+                Issuer = _jwtSettings.Issuer,
+                Audience = _jwtSettings.Audience,
                 SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(key),
                     SecurityAlgorithms.HmacSha256Signature)
