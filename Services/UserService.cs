@@ -78,7 +78,7 @@ namespace EmbarcaPro.API.Services
             var secretKey = jwtSettings.GetValue<string>("Secret")
                 ?? throw new InvalidOperationException("JWT Secret não configurada.");
 
-            var key = Encoding.ASCII.GetBytes(secretKey);
+            var key = Encoding.UTF8.GetBytes(secretKey);
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
