@@ -1,4 +1,6 @@
-﻿using EmbarcaPro.API.Models;
+﻿using EmbarcaPro.API.Common.Helpers;
+using EmbarcaPro.API.Enums;
+using EmbarcaPro.API.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -32,13 +34,15 @@ namespace EmbarcaPro.API.Configurations
 
             builder.Property(user => user.Role)
             .HasColumnName("role")
-            .HasConversion<string>()
-            .HasMaxLength(30)
+            .HasConversion(new KeyDescriptionValueConverter<UserRole>(EmbarcaProEnumsList.GetUserRoles()))
+            .HasMaxLength(5)
             .IsRequired();
 
             builder.Property(user => user.Active)
-            .HasConversion<string>()
-            .HasColumnName("active");
+            .HasColumnName("active")
+            .HasConversion(new KeyDescriptionValueConverter<UserStatus>(EmbarcaProEnumsList.GetUserStatus()))
+            .HasMaxLength(5)
+            .IsRequired();
 
             builder.Property(user => user.RegisterDate)
             .HasColumnName("register_date");

@@ -1,4 +1,6 @@
-﻿using EmbarcaPro.API.Models;
+﻿using EmbarcaPro.API.Common.Helpers;
+using EmbarcaPro.API.Enums;
+using EmbarcaPro.API.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -30,8 +32,8 @@ namespace EmbarcaPro.API.Data.Mappings
 
             builder.Property(t => t.Type)
                 .HasColumnName("type")
-                .HasConversion<string>()
-                .HasMaxLength(30)
+                .HasConversion(new KeyDescriptionValueConverter<TrailerType>(EmbarcaProEnumsList.GetTrailerTypes()))
+                .HasMaxLength(5)
                 .IsRequired();
 
             builder.Property(t => t.MaxCapacityKg)

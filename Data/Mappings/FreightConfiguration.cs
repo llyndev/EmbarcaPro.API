@@ -1,4 +1,6 @@
-﻿using EmbarcaPro.API.Models;
+﻿using EmbarcaPro.API.Common.Helpers;
+using EmbarcaPro.API.Enums;
+using EmbarcaPro.API.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -31,8 +33,8 @@ namespace EmbarcaPro.API.Data.Mappings
 
             builder.Property(f => f.Status)
                 .HasColumnName("status")
-                .HasConversion<string>()
-                .HasMaxLength(30)
+                .HasConversion(new KeyDescriptionValueConverter<FreightStatus>(EmbarcaProEnumsList.GetFreightStatus()))
+                .HasMaxLength(5)
                 .IsRequired();
 
             builder.Property(f => f.CreatedAt)
