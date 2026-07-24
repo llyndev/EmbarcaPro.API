@@ -103,5 +103,95 @@ namespace EmbarcaPro.API.Common.Helpers
             => GetCteServiceTypes().Find(p => p.Enum == enumItem).Value;
         public static string GetCteTypeDescription(CteServiceType enumItem)
             => GetCteServiceTypes().Find(p => p.Enum == enumItem).Description;
+
+        // ---------------- CT-e Status ----------------
+        public static List<KeyDescriptionValue<CteStatus>> GetCteStatus()
+        {
+            return new List<KeyDescriptionValue<CteStatus>>
+            {
+                new KeyDescriptionValue<CteStatus>(CteStatus.Draft, "D"),
+                new KeyDescriptionValue<CteStatus>(CteStatus.AwaitingAuthorization, "W"),
+                new KeyDescriptionValue<CteStatus>(CteStatus.Authorized, "A"),
+                new KeyDescriptionValue<CteStatus>(CteStatus.Rejected, "R"),
+                new KeyDescriptionValue<CteStatus>(CteStatus.Denied, "D"),
+                new KeyDescriptionValue<CteStatus>(CteStatus.Contingency, "C")
+            };
+        }
+        public static string GetCteStatusValue(CteStatus enumItem)
+            => GetCteStatus().Find(p => p.Enum == enumItem).Value;
+        public static string GetCteStatusDescription(CteStatus enumItem)
+            => GetCteStatus().Find(p => p.Enum == enumItem).Description;
+
+        // ---------------- CT-e Transport Mode ----------------
+        public static List<KeyDescriptionValue<CteTransportMode>> GetCteTransportMode()
+        {
+            return new List<KeyDescriptionValue<CteTransportMode>>
+            {
+                new KeyDescriptionValue<CteTransportMode>(CteTransportMode.Road, "R"),
+                new KeyDescriptionValue<CteTransportMode>(CteTransportMode.Air, "A"),
+                new KeyDescriptionValue<CteTransportMode>(CteTransportMode.Waterway, "W"),
+                new KeyDescriptionValue<CteTransportMode>(CteTransportMode.Rail, "F"),
+                new KeyDescriptionValue<CteTransportMode>(CteTransportMode.Pipeline, "P"),
+                new KeyDescriptionValue<CteTransportMode>(CteTransportMode.Multimodal, "M")
+            };
+        }
+        public static string GetCteTransportModeValue(CteTransportMode enumItem)
+            => GetCteTransportMode().Find(p => p.Enum == enumItem).Value;
+        public static string GetCteTransportModeDescription(CteTransportMode enumItem)
+            => GetCteTransportMode().Find(p => p.Enum == enumItem).Description;
+
+        // ---------------- CT-e Event Type ----------------
+        public static List<KeyDescriptionValue<CteEventType>> GetCteEventType()
+        {
+            return new List<KeyDescriptionValue<CteEventType>>
+            {
+                new KeyDescriptionValue<CteEventType>(CteEventType.Cancellation, "CC"),
+                new KeyDescriptionValue<CteEventType>(CteEventType.CorrectionLetter, "CL"),
+                new KeyDescriptionValue<CteEventType>(CteEventType.DeliveryReceipt, "DR"),
+                new KeyDescriptionValue<CteEventType>(CteEventType.DeliveryReceiptCancellation, "DC"),
+                new KeyDescriptionValue<CteEventType>(CteEventType.DeliveryFailure, "DF"),
+                new KeyDescriptionValue<CteEventType>(CteEventType.DeliveryFailureCancellation, "DT"),
+                new KeyDescriptionValue<CteEventType>(CteEventType.NonCompliantServiceProvision, "NS")
+            };
+        }
+        public static string GetCteEventTypeValue(CteEventType enumItem)
+            => GetCteEventType().Find(p => p.Enum == enumItem).Value;
+        public static string GetCteEventTypeDescription(CteEventType enumItem)
+            => GetCteEventType().Find(p => p.Enum == enumItem).Description;
+
+        // ---------------- Partner Type ----------------
+        public static List<KeyDescriptionValue<PartnerType>> GetPartnerType()
+        {
+            return new List<KeyDescriptionValue<PartnerType>>
+            {
+                new KeyDescriptionValue<PartnerType>(PartnerType.Shipper, "S"),
+                new KeyDescriptionValue<PartnerType>(PartnerType.Consignee, "C"),
+                new KeyDescriptionValue<PartnerType>(PartnerType.Dispatching, "D"),
+                new KeyDescriptionValue<PartnerType>(PartnerType.Receiver, "R")
+            };
+        }
+        public static string GetPartnerTypeValue(PartnerType enumItem)
+            => GetPartnerType().Find(p => p.Enum == enumItem).Value;
+        public static string GetPartnerTypeDescription(PartnerType enumItem)
+            => GetPartnerType().Find(p => p.Enum == enumItem).Description;
+
+        // ---------------- ICMS Tax Situation ----------------
+        public static List<KeyDescriptionValue<IcmsTaxSituation>> GetIcmsTaxSituation()
+        {
+            return new List<KeyDescriptionValue<IcmsTaxSituation>>
+            {
+                new KeyDescriptionValue<IcmsTaxSituation>(IcmsTaxSituation.NormalTaxation, "NT"),
+                new KeyDescriptionValue<IcmsTaxSituation>(IcmsTaxSituation.TaxationWithReducedBase, "TR"),
+                new KeyDescriptionValue<IcmsTaxSituation>(IcmsTaxSituation.Exempt, "EX"),
+                new KeyDescriptionValue<IcmsTaxSituation>(IcmsTaxSituation.NotTaxed, "NO"),
+                new KeyDescriptionValue<IcmsTaxSituation>(IcmsTaxSituation.Deferred, "DF"),
+                new KeyDescriptionValue<IcmsTaxSituation>(IcmsTaxSituation.TaxWithHolding, "TH"),
+                new KeyDescriptionValue<IcmsTaxSituation>(IcmsTaxSituation.OthersWithExemptionGrant, "OT")
+            };
+        }
+        public static string GetIcmsTaxSituationValue(IcmsTaxSituation enumItem)
+            => GetIcmsTaxSituation().Find(p => p.Enum == enumItem).Value;
+        public static string GetIcmsTaxSituationDescription(IcmsTaxSituation enumItem)
+            => GetIcmsTaxSituation().Find(p => p.Enum == enumItem).Description;
     }
 }
