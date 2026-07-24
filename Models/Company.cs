@@ -6,31 +6,31 @@
     public class Company
     {
 
-        public Guid Id { get; private set; }
+        public Guid Id { get; init; }
 
-        public string Cnpj { get; private set; }
-        public string StateTaxId { get; private set; } // IE - Inscrição 
-        public string LegalName { get; private set; } // Razão social
-        public string TradeName { get; private set; } // Nome fantasia
+        public string Cnpj { get; init; }
+        public string StateTaxId { get; init; } // IE - Inscrição 
+        public string LegalName { get; init; } // Razão social
+        public string TradeName { get; init; } // Nome fantasia
 
         /// <summary>
         /// Código de Regime Tributário - CRT (1-Simples, 2-Simples excesso, 3-Normal)
         /// </summary>
-        public int TaxRegimeCode { get; private set; }
+        public int TaxRegimeCode { get; init; }
 
-        public Address Address { get; private set; }
+        public Address Address { get; init; }
 
         /// <summary>
         /// Registro Nacional de Transportadores Rodoviários de Cargas
         /// Obrigatório para o modal rodoviário
         /// </summary>
-        public string Rntrc { get; private set; }
+        public string Rntrc { get; init; }
 
         
         // Configuração fiscal / ingração SEFAZ
-        public string IssuingAuthorityState { get; private set; } // UF autorizadora
-        public bool IsProductionEnviroment { get; private set; } // false = homologação
-        public string CertificateThumbprint { get; private set; } // referêrencia ao certificado A1/A3 
+        public string IssuingAuthorityState { get; init; } // UF autorizadora
+        public bool IsProductionEnviroment { get; init; } // false = homologação
+        public string CertificateThumbprint { get; init; } // referêrencia ao certificado A1/A3 
 
         public int CurrentSeries { get; private set; }
         public int LastCteNumber { get; private set; }
