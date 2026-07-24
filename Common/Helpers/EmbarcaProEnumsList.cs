@@ -37,7 +37,6 @@ namespace EmbarcaPro.API.Common.Helpers
         public static string GetUserRoleValue(UserRole enumItem)
             => GetUserRoles().Find(p => p.Enum == enumItem).Value;
         public static string GetUserRoleDescription(UserRole enumItem)
-            // deixarei esse comentario para ver se o weslin vai ver oq foi feito aqui 
             => GetUserRoles().Find(p => p.Enum == enumItem).Description;
 
         // ---------------- User Status ----------------
@@ -71,5 +70,38 @@ namespace EmbarcaPro.API.Common.Helpers
             => GetTrailerTypes().Find(p => p.Enum == enumItem).Value;
         public static string GetTrailerTypeDescription(TrailerType enumItem)
             => GetTrailerTypes().Find(p => p.Enum == enumItem).Description;
+
+        // ---------------- CT-e Type ----------------
+        public static List<KeyDescriptionValue<CteType>> GetCteTypes()
+        {
+            return new List<KeyDescriptionValue<CteType>>
+            {
+                new KeyDescriptionValue<CteType>(CteType.Normal, "N"),
+                new KeyDescriptionValue<CteType>(CteType.Complementary, "C"),
+                new KeyDescriptionValue<CteType>(CteType.Substitute, "S"),
+                new KeyDescriptionValue<CteType>(CteType.Annulment, "A")
+            };
+        }
+        public static string GetCteTypeValue(CteType enumItem)
+            => GetCteTypes().Find(p => p.Enum == enumItem).Value;
+        public static string GetCteTypeDescription(CteType enumItem)
+            => GetCteTypes().Find(p => p.Enum == enumItem).Description;
+
+        // ---------------- CT-e Service Type ----------------
+        public static List<KeyDescriptionValue<CteServiceType>> GetCteServiceTypes()
+        {
+            return new List<KeyDescriptionValue<CteServiceType>>
+            {
+                new KeyDescriptionValue<CteServiceType>(CteServiceType.Normal, "N"),
+                new KeyDescriptionValue<CteServiceType>(CteServiceType.Subcontracting, "S"),
+                new KeyDescriptionValue<CteServiceType>(CteServiceType.Redispatch, "R"),
+                new KeyDescriptionValue<CteServiceType>(CteServiceType.IntermediateRedispatch, "I"),
+                new KeyDescriptionValue<CteServiceType>(CteServiceType.MultimodalLinkedService, "M")
+            };
+        }
+        public static string GetCteServiceTypeValue(CteServiceType enumItem)
+            => GetCteServiceTypes().Find(p => p.Enum == enumItem).Value;
+        public static string GetCteTypeDescription(CteServiceType enumItem)
+            => GetCteServiceTypes().Find(p => p.Enum == enumItem).Description;
     }
 }
