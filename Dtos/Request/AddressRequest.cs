@@ -16,14 +16,26 @@ namespace EmbarcaPro.API.Dtos.Request
         [Required(ErrorMessage = "O Bairro é obrigatório.")]
         public required string Neighborhood { get; init; }
 
+        [Required(ErrorMessage = "O Código IBGE é obrigatório.")]
+        public required string IbgeCode { get; init; }
+
         [Required(ErrorMessage = "A Cidade é obrigatório.")]
         public required string City { get; init; }
 
-        [Required(ErrorMessage = "O Estado (UF) é obrigatório.")]
+        [Required(ErrorMessage = "A UF é obrigatória.")]
+        public required string Uf { get; init; }
+
+        [Required(ErrorMessage = "O Estado é obrigatório.")]
         public required string State { get; init; }
 
         [Required(ErrorMessage = "O CEP é obrigatório.")]
         public required string ZipCode { get; init; }
+
+        public string? CountryCode { get; init; }
+
+        public string? Country { get; init; }
+
+        public string? Phone { get; init; }
 
     }
 }
