@@ -9,10 +9,10 @@ namespace EmbarcaPro.API.Models
     public class CtePartner
     {
 
-        public Guid Id { get; init; }
+        public Guid Id { get; init; } = Guid.NewGuid();
         public Guid CteId { get; init; }
         public Guid PartnerId { get; init; }
-        public Partner Partner { get; init; }
+        public virtual Partner Partner { get; private set; } = null!;
         public PartnerType Type { get; init; }
 
         protected CtePartner()
