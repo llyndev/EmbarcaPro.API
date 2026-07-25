@@ -6,12 +6,12 @@
     public class Company
     {
 
-        public Guid Id { get; init; }
+        public Guid Id { get; init; } = Guid.NewGuid();
 
         public string Cnpj { get; init; }
-        public string StateTaxId { get; init; } // IE - Inscrição 
+        public string StateTaxId { get; init; } // IE - Inscrição Estadual
         public string LegalName { get; init; } // Razão social
-        public string TradeName { get; init; } // Nome fantasia
+        public string? TradeName { get; init; } // Nome fantasia
 
         /// <summary>
         /// Código de Regime Tributário - CRT (1-Simples, 2-Simples excesso, 3-Normal)
@@ -27,10 +27,10 @@
         public string Rntrc { get; init; }
 
         
-        // Configuração fiscal / ingração SEFAZ
+        // Configuração fiscal / integração SEFAZ
         public string IssuingAuthorityState { get; init; } // UF autorizadora
         public bool IsProductionEnviroment { get; init; } // false = homologação
-        public string CertificateThumbprint { get; init; } // referêrencia ao certificado A1/A3 
+        public string? CertificateThumbprint { get; init; } // referêrencia ao certificado A1/A3 
 
         public int CurrentSeries { get; private set; }
         public int LastCteNumber { get; private set; }
@@ -46,7 +46,7 @@
             Cnpj = cnpj.Trim();
             StateTaxId = stateTaxId.Trim();
             LegalName = legalName.Trim();
-            TradeName = tradeName?.Trim();
+            TradeName = string.IsNullOrWhiteSpace(tradeName) ? null : tradeName.Trim();
             TaxRegimeCode = taxRegimeCode;
             Address = address;
             IssuingAuthorityState = issuingAuthorityState.Trim();
