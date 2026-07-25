@@ -1,12 +1,13 @@
 using EmbarcaPro.API.Data;
 using EmbarcaPro.API.Exceptions;
+using EmbarcaPro.API.Extensions;
 using EmbarcaPro.API.Services;
 using EmbarcaPro.API.Services.Interfaces;
 using EmbarcaPro.API.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
+using Scalar.AspNetCore;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,36 +17,7 @@ builder.Services.AddControllersWithViews();
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "EmbarcaPro.API", Version = "v1" });
-
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorizarion",
-        Type = SecuritySchemeType.Http,
-        Scheme = "Bearer",
-        In = ParameterLocation.Header,
-        Description = "Insira o token JWT desta maneira: Bearer {token}"
-    });
-
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
-
-});
+builder.Services.AddEmbarcaProOpenApi();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(
@@ -96,8 +68,14 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    // documento em /openapi/v1.json
+    app.MapOpenApi();
+
+    // UI interativa em /scalar
+    app.MapScalarApiReference(options =>
+    {
+        options.WithTitle("EmbarcaPro.API");
+    });
 }
 
 app.UseExceptionHandler();
