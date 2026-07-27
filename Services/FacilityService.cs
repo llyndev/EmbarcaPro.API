@@ -15,11 +15,15 @@ namespace EmbarcaPro.API.Services
             var address = new Address(
                 street: request.Address.Street,
                 number: request.Address.Number,
-                complement: request.Address.Complement ?? string.Empty,
+                complement: request.Address.Complement,
                 neighborhood: request.Address.Neighborhood,
                 city: request.Address.City,
+                uf: request.Address.Uf,
                 state: request.Address.State,
-                zipCode: request.Address.ZipCode);
+                ibgeCode: request.Address.IbgeCode,
+                zipCode: request.Address.ZipCode,
+                phone: request.Address.Phone
+            );
 
             var newFacility = new Facility(
                 name: request.Name,
