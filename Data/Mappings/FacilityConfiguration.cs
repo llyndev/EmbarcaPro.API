@@ -36,6 +36,11 @@ namespace EmbarcaPro.API.Data.Mappings
                 address.Property(a => a.City).HasColumnName("city").HasMaxLength(100).IsRequired();
                 address.Property(a => a.State).HasColumnName("state").HasMaxLength(2).IsRequired();
                 address.Property(a => a.ZipCode).HasColumnName("zip_code").HasMaxLength(8).IsRequired();
+                address.Property(a => a.Uf).HasColumnName("uf").HasMaxLength(2).IsRequired();
+                address.Property(a => a.IbgeCode).HasColumnName("ibge_code").HasMaxLength(7).IsRequired();
+                address.Property(a => a.CountryCode).HasColumnName("country_code").HasMaxLength(4);
+                address.Property(a => a.Country).HasColumnName("country").HasMaxLength(60);
+                address.Property(a => a.Phone).HasColumnName("phone").HasMaxLength(20).IsRequired(false);
             });
 
             builder.Property(f => f.IsActive)
