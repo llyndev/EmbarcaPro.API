@@ -23,8 +23,8 @@ namespace EmbarcaPro.API.Models
 
         public User(string name, string email, string passwordHash, UserRole role)
         {
-            Name = name;
-            Email = email;
+            Name = name.Trim();
+            Email = email.Trim().ToLowerInvariant();
             PasswordHash = passwordHash;
             Role = role;
             Active = UserStatus.Active;

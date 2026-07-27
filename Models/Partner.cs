@@ -28,7 +28,7 @@
             Address = address;
             StateTaxId = string.IsNullOrWhiteSpace(stateTaxId) ? null : stateTaxId.Trim();
             Phone = string.IsNullOrWhiteSpace(phone) ? null : phone.Trim();
-            Email = string.IsNullOrWhiteSpace(email) ? null : email.Trim();
+            Email = string.IsNullOrWhiteSpace(email) ? null : email.Trim().ToLowerInvariant();
         }
     }
 }
