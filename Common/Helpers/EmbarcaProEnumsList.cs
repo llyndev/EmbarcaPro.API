@@ -71,5 +71,21 @@ namespace EmbarcaPro.API.Common.Helpers
             => GetTrailerTypes().Find(p => p.Enum == enumItem).Value;
         public static string GetTrailerTypeDescription(TrailerType enumItem)
             => GetTrailerTypes().Find(p => p.Enum == enumItem).Description;
+
+        // ---------------- CT-e Status ----------------
+        public static List<KeyDescriptionValue<CteStatus>> GetCteStatus()
+        {
+            return new List<KeyDescriptionValue<CteStatus>>
+            {
+                new KeyDescriptionValue<CteStatus>(CteStatus.Draft, "R"),
+                new KeyDescriptionValue<CteStatus>(CteStatus.Authorized, "A"),
+                new KeyDescriptionValue<CteStatus>(CteStatus.Canceled, "C"),
+                new KeyDescriptionValue<CteStatus>(CteStatus.Denied, "D")
+            };
+        }
+        public static string GetCteStatusValue(CteStatus enumItem)
+            => GetCteStatus().Find(p => p.Enum == enumItem).Value;
+        public static string GetCteStatusDescription(CteStatus enumItem)
+            => GetCteStatus().Find(p => p.Enum == enumItem).Description;
     }
 }
