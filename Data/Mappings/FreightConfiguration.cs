@@ -23,12 +23,10 @@ namespace EmbarcaPro.API.Data.Mappings
 
             builder.Property(f => f.EstimatedWeightKg)
                 .HasColumnName("estimated_weight_kg")
-                .HasPrecision(10, 2)
                 .IsRequired();
 
             builder.Property(f => f.FreightValue)
                 .HasColumnName("freight_value")
-                .HasPrecision(10, 2)
                 .IsRequired();
 
             builder.Property(f => f.Status)

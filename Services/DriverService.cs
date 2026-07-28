@@ -23,13 +23,17 @@ namespace EmbarcaPro.API.Services
             }
 
             var address = new Address(
-                    street: request.Address.Street,
-                    number: request.Address.Number,
-                    complement: request.Address.Complement ?? string.Empty,
-                    neighborhood: request.Address.Neighborhood,
-                    city: request.Address.City,
-                    state: request.Address.State,
-                    zipCode: request.Address.ZipCode);
+                street: request.Address.Street,
+                number: request.Address.Number,
+                complement: request.Address.Complement, 
+                neighborhood: request.Address.Neighborhood,
+                city: request.Address.City,
+                uf: request.Address.Uf,
+                state: request.Address.State,
+                ibgeCode: request.Address.IbgeCode,
+                zipCode: request.Address.ZipCode,
+                phone: request.Address.Phone
+            );
 
             var driver = new Driver(
                 request.Name,

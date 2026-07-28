@@ -1,19 +1,33 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 
 namespace EmbarcaPro.API.Enums
 {
+    /// <summary>
+    /// Situação do CT-e dentro do sistema 
+    /// </summary>
     public enum CteStatus
     {
         [Description("Rascunho")]
         Draft,
 
+        [Description("Aguardando autorização")]
+        AwaitingAuthorization,
+
         [Description("Autorizado")]
         Authorized,
 
+        [Description("Rejeitado")]
+        Rejected,
+
         [Description("Cancelado")]
-        Canceled,
+        Cancelled,
 
         [Description("Denegado")]
-        Denied
+        Denied,
+
+        [Description("Em contingencia")]
+        Contingency
+
+
     }
 }

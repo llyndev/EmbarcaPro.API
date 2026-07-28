@@ -9,47 +9,94 @@ namespace EmbarcaPro.API.Models
     /// </summary>
     public class Cte
     {
-        public int Id { get; private set; }
+        // Identificação do CT-e
+        public Guid Id { get; init; } = Guid.NewGuid();
 
-        public int Number { get; private set; }
+        public string Uf { get; init; } // UF de emissão
+        public int Series { get; init; }
+        public int Number {  get; init; }
+        public string AccessKey { get; private set; } // preenchida após autorização
 
-        public int FreightId { get; private set; }
-        public virtual Freight Freight { get; private set; } = null!;
 
-        public CteStatus Status { get; private set; }
+        public DateTime IssueDateTime { get; init; }
+        public CteType Type { get; init; }
+        public CteServiceType ServiceType { get; init; }
+        public CteTransportMode TransportMode { get; init; }
+        public string PredominantCfop { get; init; }
+        public string OriginIbgeCityCode { get; init; } // munícipio de início de prestação
+        public string DestinationIbgeCityCode { get; init; } // munícipio de fim de prestação
 
-        public decimal TotalServiceValue { get; private set; }
-        public decimal AmountReceivable { get; private set; }
+        // Informações emitente CT-e
+        public Guid CompanyId { get; init; }
+        public virtual Company Company { get; private set; } = null!;
 
-        // Preenchido futuramente pela integração com a SEFAZ (fora de escopo por enquanto).
-        public string? AccessKey { get; private set; }
+        // Informações rem, dest, exped, receb
+        private readonly List<CtePartner> _partners = new();
+        public virtual IReadOnlyCollection<CtePartner> Partners => _partners.AsReadOnly();
 
-        public DateTime CreatedAt { get; private set; }
-        public DateTime? AuthorizedAt { get; private set; }
-        public DateTime? CanceledAt { get; private set; }
 
+        // Valores de prestação
+        public decimal TotalServiceValue { get; init; } // vTPrest
+        public decimal AmountReceivable { get; init; } // vRec
         private readonly List<CteFreightComponent> _freightComponents = new();
         public virtual IReadOnlyCollection<CteFreightComponent> FreightComponents => _freightComponents.AsReadOnly();
 
+        // Impostos
+        public virtual IcmsTax Icms { get; private set; } = null!;
+
+        // Informações do CT-e Normal
+        public virtual Cargo Cargo { get; private set; } = null!;
+        private readonly List<ReferencedInvoice> _referencedInvoices = new();
+        public virtual IReadOnlyCollection<ReferencedInvoice> ReferencedInvoices => _referencedInvoices.AsReadOnly();
+
+        // Informações do Modal do CT-e / Padrão Rodoviário
+        public string? CarrierRntrc { get; init; }
+
+        // Controle interno do CT-e
+        public CteStatus Status { get; private set; } = CteStatus.Draft;
+        public string? AuthorizationProtocol { get; private set; }
+        public DateTime? AuthorizationDateTime {  get; private set; }
+        public string? RejectionReason { get; private set; }
+        public string? SignedXml { get; private set; }
+        public string? AuthorizedXml { get; private set; }
+
+        public DateTime CreatedAt { get; private set; }
+
+        private readonly List<CteEvent> _events = new();
+        public virtual IReadOnlyCollection<CteEvent> Events => _events.AsReadOnly();
+
         protected Cte() { }
 
-        public Cte(int freightId, int number, decimal totalServiceValue, decimal amountReceivable)
+        public Cte(Company company, string uf, int series, int number, DateTime issueDateTime, CteType type, CteServiceType serviceType,
+            CteTransportMode transportMode, string predominantCfop, string originIbgeCode, string destinationIbgeCode, 
+            decimal totalServiceValue, decimal amountReceivable)
         {
+            
             if (totalServiceValue <= 0)
                 throw new ArgumentException("O valor total do serviço deve ser maior que zero.");
 
             if (amountReceivable < 0 || amountReceivable > totalServiceValue)
                 throw new ArgumentException("O valor a receber deve estar entre zero e o valor total do serviço.");
-
-            FreightId = freightId;
+          
+            CompanyId = company.Id;
+            Company = company;
+            Uf = uf.Trim();
+            Series = series;
             Number = number;
+            IssueDateTime = issueDateTime;
+            Type = type;
+            ServiceType = serviceType;
+            TransportMode = transportMode;
+            PredominantCfop = predominantCfop;
+            OriginIbgeCityCode = originIbgeCode.Trim();
+            DestinationIbgeCityCode = destinationIbgeCode.Trim();
             TotalServiceValue = totalServiceValue;
             AmountReceivable = amountReceivable;
-            Status = CteStatus.Draft;
+            CarrierRntrc = company.Rntrc;
             CreatedAt = DateTime.UtcNow;
         }
-
-        public void AddFreightComponent(string name, decimal value)
+      
+              public void AddFreightComponent(string name, decimal value)
         {
             EnsureDraft("adicionar componentes de frete");
             _freightComponents.Add(new CteFreightComponent(name, value));
@@ -104,5 +151,6 @@ namespace EmbarcaPro.API.Models
             if (Status != CteStatus.Draft)
                 throw new InvalidOperationException($"Não é possível {action}: o CT-e não está mais em rascunho.");
         }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using EmbarcaPro.API.Models;
+﻿using EmbarcaPro.API.Data.Converters;
+using EmbarcaPro.API.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace EmbarcaPro.API.Data
@@ -25,6 +26,24 @@ namespace EmbarcaPro.API.Data
         public DbSet<Cte> Ctes { get; set; }
 
         public DbSet<CteFreightComponent> CteFreightComponents { get; set; }
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            base.ConfigureConventions(configurationBuilder);
+
+            // Toda data passa a ser gravada e lida como UTC.
+            configurationBuilder.Properties<DateTime>()
+                .HaveConversion<UtcDateTimeConverter>();
+
+            configurationBuilder.Properties<DateTime?>()
+                .HaveConversion<NullableUtcDateTimeConverter>();
+
+            configurationBuilder.Properties<Decimal>()
+                .HavePrecision(18, 2);
+
+            configurationBuilder.Properties<Decimal?>()
+                .HavePrecision(18, 2);
+
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

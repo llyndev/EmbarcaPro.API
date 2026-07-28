@@ -24,11 +24,11 @@
 
         public Driver(string name, string phone, string email, string cpf, string cnh, Address address)
         {
-            Name = name;
-            Phone = phone;
-            Email = email;
-            Cpf = cpf.Replace(".", "").Replace("-", "");
-            Cnh = cnh;
+            Name = name.Trim();
+            Phone = phone.Trim();
+            Email = email.Trim().ToLowerInvariant();
+            Cpf = cpf.Replace(".", "").Replace("-", "").Trim();
+            Cnh = cnh.Trim();
             Address = address;
 
             IsActive = true;

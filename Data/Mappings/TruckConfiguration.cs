@@ -39,7 +39,6 @@ namespace EmbarcaPro.API.Data.Mappings
 
             builder.Property(t => t.MaxCapacityKg)
                 .HasColumnName("max_capacity_kg")
-                .HasPrecision(10, 2)
                 .IsRequired();
 
             builder.Property(t => t.IsAvailable)
