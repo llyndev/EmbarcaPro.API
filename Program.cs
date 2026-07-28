@@ -10,8 +10,13 @@ using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using System.Text;
 
+using DotNetEnv;
+
+Env.Load();
+
 var builder = WebApplication.CreateBuilder(args);
 
+var connectionString = Environment.GetEnvironmentVariable("NEON_CONNECTION_STRING");
 
 builder.Services.AddControllersWithViews();
 
@@ -22,7 +27,7 @@ builder.Services.AddEmbarcaProOpenApi();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
+        connectionString,
         npgsql =>
         {
             npgsql.EnableRetryOnFailure(
