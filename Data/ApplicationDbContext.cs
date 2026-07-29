@@ -23,6 +23,9 @@ namespace EmbarcaPro.API.Data
 
         public DbSet<Freight> Freights { get; set; }
 
+        public DbSet<Cte> Ctes { get; set; }
+
+        public DbSet<CteFreightComponent> CteFreightComponents { get; set; }
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
             base.ConfigureConventions(configurationBuilder);

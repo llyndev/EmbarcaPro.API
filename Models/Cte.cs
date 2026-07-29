@@ -1,15 +1,11 @@
-﻿using EmbarcaPro.API.Enums;
+using EmbarcaPro.API.Enums;
 
 namespace EmbarcaPro.API.Models
 {
     /// <summary>
-    /// Conhecimento de Transporte Eletrônico (CT-e).
-    /// 
-    /// TODO:
-    /// - Implementar validações de domínio nos métodos de mutação.
-    /// - Revisar regras de transição de status.
-    /// - Validar consistência antes da assinatura e autorização.
-    /// - Completar regras de negócio conforme o Manual de Orientação do CT-e.
+    /// CT-e (Conhecimento de Transporte Eletrônico) — documento fiscal da viagem.
+    /// Aggregate root: controla a máquina de estados (Rascunho → Autorizado → Cancelado / Denegado)
+    /// e a composição do valor do frete.
     /// </summary>
     public class Cte
     {
@@ -75,6 +71,13 @@ namespace EmbarcaPro.API.Models
             CteTransportMode transportMode, string predominantCfop, string originIbgeCode, string destinationIbgeCode, 
             decimal totalServiceValue, decimal amountReceivable)
         {
+            
+            if (totalServiceValue <= 0)
+                throw new ArgumentException("O valor total do serviço deve ser maior que zero.");
+
+            if (amountReceivable < 0 || amountReceivable > totalServiceValue)
+                throw new ArgumentException("O valor a receber deve estar entre zero e o valor total do serviço.");
+          
             CompanyId = company.Id;
             Company = company;
             Uf = uf.Trim();
@@ -92,7 +95,62 @@ namespace EmbarcaPro.API.Models
             CarrierRntrc = company.Rntrc;
             CreatedAt = DateTime.UtcNow;
         }
-        
+      
+              public void AddFreightComponent(string name, decimal value)
+        {
+            EnsureDraft("adicionar componentes de frete");
+            _freightComponents.Add(new CteFreightComponent(name, value));
+        }
+
+        /// <summary>
+        /// A soma dos componentes de frete deve ser igual ao valor total do serviço.
+        /// </summary>
+        public void ValidateFreightComposition()
+        {
+            if (_freightComponents.Count == 0)
+                throw new InvalidOperationException("O CT-e precisa de ao menos um componente de frete.");
+
+            var sum = _freightComponents.Sum(c => c.Value);
+            if (sum != TotalServiceValue)
+                throw new InvalidOperationException(
+                    $"A soma dos componentes ({sum:N2}) não confere com o valor total do serviço ({TotalServiceValue:N2}).");
+        }
+
+        // ---------- Máquina de estados ----------
+
+        public void Authorize()
+        {
+            if (Status != CteStatus.Draft)
+                throw new InvalidOperationException("Apenas um CT-e em rascunho pode ser autorizado.");
+
+            ValidateFreightComposition();
+
+            Status = CteStatus.Authorized;
+            AuthorizedAt = DateTime.UtcNow;
+        }
+
+        public void Cancel()
+        {
+            if (Status != CteStatus.Authorized)
+                throw new InvalidOperationException("Apenas um CT-e autorizado pode ser cancelado.");
+
+            Status = CteStatus.Canceled;
+            CanceledAt = DateTime.UtcNow;
+        }
+
+        public void Deny()
+        {
+            if (Status != CteStatus.Draft)
+                throw new InvalidOperationException("Apenas um CT-e em rascunho pode ser denegado.");
+
+            Status = CteStatus.Denied;
+        }
+
+        private void EnsureDraft(string action)
+        {
+            if (Status != CteStatus.Draft)
+                throw new InvalidOperationException($"Não é possível {action}: o CT-e não está mais em rascunho.");
+        }
 
     }
 }

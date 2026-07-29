@@ -15,6 +15,7 @@ namespace EmbarcaPro.API.Data.Mappings
             builder.ToTable("ctes");
 
             builder.HasKey(c => c.Id);
+            builder.Property(c => c.Id).HasColumnName("cte_id");
 
             builder.Property(c => c.Id)
                 .HasColumnName("cte_id");
@@ -139,9 +140,9 @@ namespace EmbarcaPro.API.Data.Mappings
             #region Relacionamentos
 
             builder.HasOne(c => c.Company)
-               .WithMany()
+                .WithMany()
                .HasForeignKey(c => c.CompanyId)
-               .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict);
 
             // As colecoes sao expostas como IReadOnlyCollection sobre campos privados.
             // Sem PropertyAccessMode.Field o EF nao consegue popular na leitura.

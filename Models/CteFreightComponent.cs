@@ -1,13 +1,15 @@
-﻿namespace EmbarcaPro.API.Models
+namespace EmbarcaPro.API.Models
 {
     /// <summary>
-    /// detalhamento dos componentes do valor do frete
-    /// (frete peso, seguro, pedágio, etc.)
+    /// Componente do valor do frete de um CT-e (ex.: Frete peso, Pedágio, GRIS).
+    /// A soma dos componentes deve bater com o TotalServiceValue do CT-e.
     /// </summary>
     public class CteFreightComponent
     {
 
-        public Guid Id { get; init; } = Guid.NewGuid();
+        public int Id { get; private set; }
+
+        public Guid PublicId { get; init; } = Guid.NewGuid();
         public Guid CteId { get; init; }
 
         public string Name { get; init; }
@@ -17,6 +19,12 @@
 
         public CteFreightComponent(Guid cteId, string name, decimal value)
         {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("O nome do componente de frete é obrigatório.");
+
+            if (value <= 0)
+                throw new ArgumentException("O valor do componente de frete deve ser maior que zero.");
+          
             CteId = cteId;
             Name = name.Trim();
             Value = value;
