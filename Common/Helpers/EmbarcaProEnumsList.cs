@@ -194,5 +194,21 @@ namespace EmbarcaPro.API.Common.Helpers
             => GetIcmsTaxSituation().Find(p => p.Enum == enumItem).Value;
         public static string GetIcmsTaxSituationDescription(IcmsTaxSituation enumItem)
             => GetIcmsTaxSituation().Find(p => p.Enum == enumItem).Description;
+
+        // ---------------- CRT Types ----------------
+        public static List<KeyDescriptionValue<CrtType>> GetCrtType()
+        {
+            return new List<KeyDescriptionValue<CrtType>>
+            {
+                new KeyDescriptionValue<CrtType>(CrtType.SimplifiedTaxation, "ST"),
+                new KeyDescriptionValue<CrtType>(CrtType.SimplifiedTaxationExcessSublimit, "SE"),
+                new KeyDescriptionValue<CrtType>(CrtType.NormalRegime, "NR"),
+                new KeyDescriptionValue<CrtType>(CrtType.IndividualMicroentrepreneur, "IM")
+            };
+        }
+        public static string GetCrtTypeValue(CrtType enumItem)
+            => GetCrtType().Find(p => p.Enum == enumItem).Value;
+            public static string GetCrtTypeDescription(CrtType enumItem)
+            => GetCrtType().Find(p => p.Enum == enumItem).Description;
     }
 }
