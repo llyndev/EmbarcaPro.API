@@ -10,8 +10,12 @@ namespace EmbarcaPro.API.Data.Mappings
         {
             builder.ToTable("cte_freight_components");
 
+            builder.HasKey(c => c.Id);
             builder.Property(c => c.Id)
                 .HasColumnName("freight_component_id");
+
+            builder.Property(c => c.PublicId)
+                .HasColumnName("public_id");
 
             builder.Property(c => c.CteId)
                 .HasColumnName("cte_id")

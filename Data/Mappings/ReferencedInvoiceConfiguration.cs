@@ -14,6 +14,9 @@ namespace EmbarcaPro.API.Data.Mappings
             builder.Property(r => r.Id)
                 .HasColumnName("referenced_invoice_id");
 
+            builder.Property(r => r.PublicId)
+                .HasColumnName("public_id");
+
             builder.Property(r => r.CteId)
                 .HasColumnName("cte_id")
                 .IsRequired();

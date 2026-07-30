@@ -7,7 +7,8 @@
     public class Partner
     {
 
-        public Guid Id { get; init; } = Guid.NewGuid();
+        public int Id { get; init; }
+        public Guid PublicId { get; init; } = Guid.NewGuid();
 
         public string CnpjOrCpf { get; init; } // CNPJ ou CPF
         public string? StateTaxId { get; init; } // IE - Inscrição Estadual

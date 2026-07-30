@@ -6,7 +6,8 @@
     /// </summary>
     public class CargoQuantity
     {
-        public Guid Id { get; init; } = Guid.NewGuid();
+        public int Id { get; init; }
+        public Guid PublicId { get; init; } = Guid.NewGuid();
         public Guid CargoId { get; init; }
 
         // Código da unidade: 00-M3, 01-KG, 02-TON, 03-Unidade, 04-Litros, 05-MMBTU

@@ -8,8 +8,8 @@ namespace EmbarcaPro.API.Models
     /// </summary>
     public class CtePartner
     {
-
-        public Guid Id { get; init; } = Guid.NewGuid();
+        public int Id { get; init; }
+        public Guid PublicId { get; init; } = Guid.NewGuid();
         public Guid CteId { get; init; }
         public Guid PartnerId { get; init; }
         public virtual Partner Partner { get; private set; } = null!;

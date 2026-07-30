@@ -3,7 +3,8 @@
     public class Driver
     {
 
-        public int Id { get; private set; }
+        public int Id { get; init; }
+        public Guid PublicId { get; init; }
 
         public string Name { get; private set; }
 

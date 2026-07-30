@@ -111,8 +111,8 @@ namespace EmbarcaPro.API.Common.Helpers
             {
                 new KeyDescriptionValue<CteStatus>(CteStatus.Draft, "R"),
                 new KeyDescriptionValue<CteStatus>(CteStatus.Authorized, "A"),
-                new KeyDescriptionValue<CteStatus>(CteStatus.Canceled, "C"),
-                new KeyDescriptionValue<CteStatus>(CteStatus.Denied, "D")
+                new KeyDescriptionValue<CteStatus>(CteStatus.Cancelled, "C"),
+                new KeyDescriptionValue<CteStatus>(CteStatus.Denied, "D"),
                 new KeyDescriptionValue<CteStatus>(CteStatus.AwaitingAuthorization, "W"),
                 new KeyDescriptionValue<CteStatus>(CteStatus.Rejected, "R"),
                 new KeyDescriptionValue<CteStatus>(CteStatus.Contingency, "T")
@@ -194,5 +194,21 @@ namespace EmbarcaPro.API.Common.Helpers
             => GetIcmsTaxSituation().Find(p => p.Enum == enumItem).Value;
         public static string GetIcmsTaxSituationDescription(IcmsTaxSituation enumItem)
             => GetIcmsTaxSituation().Find(p => p.Enum == enumItem).Description;
+
+        // ---------------- CRT Types ----------------
+        public static List<KeyDescriptionValue<CrtType>> GetCrtType()
+        {
+            return new List<KeyDescriptionValue<CrtType>>
+            {
+                new KeyDescriptionValue<CrtType>(CrtType.SimplifiedTaxation, "ST"),
+                new KeyDescriptionValue<CrtType>(CrtType.SimplifiedTaxationExcessSublimit, "SE"),
+                new KeyDescriptionValue<CrtType>(CrtType.NormalRegime, "NR"),
+                new KeyDescriptionValue<CrtType>(CrtType.IndividualMicroentrepreneur, "IM")
+            };
+        }
+        public static string GetCrtTypeValue(CrtType enumItem)
+            => GetCrtType().Find(p => p.Enum == enumItem).Value;
+            public static string GetCrtTypeDescription(CrtType enumItem)
+            => GetCrtType().Find(p => p.Enum == enumItem).Description;
     }
 }
