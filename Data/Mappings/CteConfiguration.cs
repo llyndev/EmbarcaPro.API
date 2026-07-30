@@ -15,7 +15,11 @@ namespace EmbarcaPro.API.Data.Mappings
             builder.ToTable("ctes");
 
             builder.HasKey(c => c.Id);
-            builder.Property(c => c.Id).HasColumnName("cte_id");
+            builder.Property(c => c.Id)
+                .HasColumnName("cte_id");
+
+            builder.Property(c => c.PublicId)
+                .HasColumnName("public_id");
 
             builder.Property(c => c.Id)
                 .HasColumnName("cte_id");

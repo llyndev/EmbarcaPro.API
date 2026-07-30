@@ -10,7 +10,8 @@ namespace EmbarcaPro.API.Models
     public class Cte
     {
         // Identificação do CT-e
-        public Guid Id { get; init; } = Guid.NewGuid();
+        public int Id { get; init; }
+        public Guid PublicId { get; init; } = Guid.NewGuid();
 
         public string Uf { get; init; } // UF de emissão
         public int Series { get; init; }
@@ -27,7 +28,7 @@ namespace EmbarcaPro.API.Models
         public string DestinationIbgeCityCode { get; init; } // munícipio de fim de prestação
 
         // Informações emitente CT-e
-        public Guid CompanyId { get; init; }
+        public int CompanyId { get; init; }
         public virtual Company Company { get; private set; } = null!;
 
         // Informações rem, dest, exped, receb
@@ -59,6 +60,8 @@ namespace EmbarcaPro.API.Models
         public string? RejectionReason { get; private set; }
         public string? SignedXml { get; private set; }
         public string? AuthorizedXml { get; private set; }
+        public DateTime AuthorizedAt { get; private set; }
+        public DateTime CancelledAt { get; private set; }
 
         public DateTime CreatedAt { get; private set; }
 
@@ -96,10 +99,10 @@ namespace EmbarcaPro.API.Models
             CreatedAt = DateTime.UtcNow;
         }
       
-              public void AddFreightComponent(string name, decimal value)
+              public void AddFreightComponent(int cteId,string name, decimal value)
         {
             EnsureDraft("adicionar componentes de frete");
-            _freightComponents.Add(new CteFreightComponent(name, value));
+            _freightComponents.Add(new CteFreightComponent(cteId, name, value));
         }
 
         /// <summary>
@@ -134,8 +137,8 @@ namespace EmbarcaPro.API.Models
             if (Status != CteStatus.Authorized)
                 throw new InvalidOperationException("Apenas um CT-e autorizado pode ser cancelado.");
 
-            Status = CteStatus.Canceled;
-            CanceledAt = DateTime.UtcNow;
+            Status = CteStatus.Cancelled;
+            CancelledAt = DateTime.UtcNow;
         }
 
         public void Deny()

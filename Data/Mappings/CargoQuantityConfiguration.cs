@@ -14,6 +14,9 @@ namespace EmbarcaPro.API.Data.Mappings
             builder.HasKey(q => q.Id);
             builder.Property(q => q.Id).HasColumnName("cargo_quantity_id");
 
+            builder.Property(q => q.PublicId)
+                .HasColumnName("public_id");
+
             builder.Property(q => q.CargoId).HasColumnName("cargo_id").IsRequired();
 
             builder.Property(q => q.UnitCode)

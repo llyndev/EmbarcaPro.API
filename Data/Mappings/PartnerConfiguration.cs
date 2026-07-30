@@ -14,6 +14,9 @@ namespace EmbarcaPro.API.Data.Mappings
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Id).HasColumnName("partner_id");
 
+            builder.Property(p => p.PublicId)
+                .HasColumnName("public_id");
+
             builder.Property(p => p.CnpjOrCpf)
                 .HasColumnName("cpnj_or_cpf")
                 .HasMaxLength(14)

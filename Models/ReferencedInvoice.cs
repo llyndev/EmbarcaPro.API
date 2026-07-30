@@ -6,8 +6,8 @@
     /// </summary>
     public class ReferencedInvoice
     {
-
-        public Guid Id { get; init; } = Guid.NewGuid();
+        public int Id { get; init; }
+        public Guid PublicId { get; init; } = Guid.NewGuid();
         public Guid CteId { get; init; }
 
         public string NfeAccessKey { get; init; }

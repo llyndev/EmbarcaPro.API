@@ -17,6 +17,9 @@ namespace EmbarcaPro.API.Data.Mappings
             builder.Property(c => c.Id)
                 .HasColumnName("cte_event_id");
 
+            builder.Property(c => c.PublicId)
+                .HasColumnName("public_id");
+
             builder.Property(c => c.CteId)
                 .HasColumnName("cte_id")
                 .IsRequired();
