@@ -4,8 +4,7 @@
     (
         
         Guid Id,
-        string Type,
-        string TypeDescription,
+        EnumResponse Type,
         string CnpjOrCpf,
         string LegalNameOrFullName,
         string City,

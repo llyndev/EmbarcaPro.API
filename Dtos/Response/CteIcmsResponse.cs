@@ -2,8 +2,7 @@
 {
     public record CteIcmsResponse
     (
-        string Situation,
-        string SituationDescription,
+        EnumResponse Situation,
         decimal? TaxBase,
         decimal? Rate,
         decimal? Value,

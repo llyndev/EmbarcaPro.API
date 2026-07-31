@@ -2,8 +2,7 @@
 {
     public record CteEventResponse
     (
-        string Type,
-        string TypeDescription,
+        EnumResponse Type,
         int SequenceNumber,
         DateTime EventDateTime,
         string? Justification,
