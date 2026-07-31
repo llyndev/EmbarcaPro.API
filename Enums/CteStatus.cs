@@ -20,7 +20,7 @@ namespace EmbarcaPro.API.Enums
         Rejected,
 
         [Description("Cancelado")]
-        Cancelled,
+        Canceled,
 
         [Description("Denegado")]
         Denied,

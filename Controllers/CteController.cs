@@ -29,10 +29,10 @@ namespace EmbarcaPro.API.Controllers
             return result.ToActionResult(this);
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetById([FromRoute] int id)
+        [HttpGet("{publicId:guid}")]
+        public async Task<IActionResult> GetById([FromRoute] Guid id)   
         {
-            var result = await cteService.GetCteByIdAsync(id);
+            var result = await cteService.GetCteByPublicIdAsync(id);
 
             return result.ToActionResult(this);
         }

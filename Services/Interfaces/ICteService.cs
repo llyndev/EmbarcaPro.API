@@ -11,7 +11,7 @@ namespace EmbarcaPro.API.Services.Interfaces
 
         Task<ServiceResult<PagedList<CteResponse>>> GetAllCtesAsync(int page, int pageSize);
 
-        Task<ServiceResult<CteResponse>> GetCteByIdAsync(int id);
+        Task<ServiceResult<CteResponse>> GetCteByPublicIdAsync(Guid id);
 
         Task<ServiceResult<CteResponse>> AuthorizeCteAsync(int id);
 
