@@ -8,39 +8,40 @@ using EmbarcaPro.API.Dtos.Response;
 using EmbarcaPro.API.Models;
 using EmbarcaPro.API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using EmbarcaPro.API.Extensions;
 
 namespace EmbarcaPro.API.Services
 {
     public class CteService(ApplicationDbContext context) : ICteService
     {
-        public async Task<ServiceResult<CteResponse>> CreateCteAsync(CreateCteRequest request)
-        {
-            var freightExists = await context.Freights.AnyAsync(f => f.Id == request.FreightId);
-            if (!freightExists)
-                return ServiceResult<CteResponse>.Fail("Viagem (frete) não encontrada.", ErrorType.NotFound);
+        //public async Task<ServiceResult<CteResponse>> CreateCteAsync(CreateCteRequest request)
+        //{
+        //    var freightExists = await context.Freights.AnyAsync(f => f.Id == request.FreightId);
+        //    if (!freightExists)
+        //        return ServiceResult<CteResponse>.Fail("Viagem (frete) não encontrada.", ErrorType.NotFound);
 
-            var numberExists = await context.Ctes.AnyAsync(c => c.Number == request.Number);
-            if (numberExists)
-                return ServiceResult<CteResponse>.Fail("Já existe um CT-e com este número.", ErrorType.Conflict);
+        //    var numberExists = await context.Ctes.AnyAsync(c => c.Number == request.Number);
+        //    if (numberExists)
+        //        return ServiceResult<CteResponse>.Fail("Já existe um CT-e com este número.", ErrorType.Conflict);
 
-            Cte cte;
-            try
-            {
-                cte = new Cte(request.FreightId, request.Number, request.TotalServiceValue, request.AmountReceivable);
+        //    Cte cte;
+        //    try
+        //    {
+        //        cte = new Cte(request.FreightId, request.Number, request.TotalServiceValue, request.AmountReceivable);
 
-                foreach (var component in request.FreightComponents)
-                    cte.AddFreightComponent(component.Name, component.Value);
-            }
-            catch (ArgumentException ex)
-            {
-                return ServiceResult<CteResponse>.Fail(ex.Message, ErrorType.Validation);
-            }
+        //        foreach (var component in request.FreightComponents)
+        //            cte.AddFreightComponent(component.Name, component.Value);
+        //    }
+        //    catch (ArgumentException ex)
+        //    {
+        //        return ServiceResult<CteResponse>.Fail(ex.Message, ErrorType.Validation);
+        //    }
 
-            await context.Ctes.AddAsync(cte);
-            await context.SaveChangesAsync();
+        //    await context.Ctes.AddAsync(cte);
+        //    await context.SaveChangesAsync();
 
-            return ServiceResult<CteResponse>.Ok(ToResponse(cte), "CT-e criado com sucesso!");
-        }
+        //    return ServiceResult<CteResponse>.Ok(cte.ToResponse(), "CT-e criado com sucesso!");
+        //}
 
         public async Task<ServiceResult<PagedList<CteListItemResponse>>> GetAllCtesAsync(int page, int pageSize)
         {
@@ -104,7 +105,7 @@ namespace EmbarcaPro.API.Services
             if (cte == null)
                 return ServiceResult<CteResponse>.Fail("CT-e não encontrado.", ErrorType.NotFound);
 
-            return ServiceResult<CteResponse>.Ok(ToResponse(cte), $"CT-e {id}");
+            return ServiceResult<CteResponse>.Ok(cte.ToResponse(), $"CT-e {id}");
         }
 
         public async Task<ServiceResult<CteResponse>> AuthorizeCteAsync(Guid id)
@@ -126,7 +127,7 @@ namespace EmbarcaPro.API.Services
 
             await context.SaveChangesAsync();
 
-            return ServiceResult<CteResponse>.Ok(ToResponse(cte), "CT-e autorizado com sucesso.");
+            return ServiceResult<CteResponse>.Ok(cte.ToResponse(), "CT-e autorizado com sucesso.");
         }
 
         public Task<ServiceResult<CteResponse>> CancelCteAsync(Guid id)
@@ -156,26 +157,7 @@ namespace EmbarcaPro.API.Services
 
             await context.SaveChangesAsync();
 
-            return ServiceResult<CteResponse>.Ok(ToResponse(cte), successMessage);
-        }
-
-        private static CteResponse ToResponse(Cte cte)
-        {
-            return new CteResponse(
-                cte.Id,
-                cte.Number,
-                cte.FreightId,
-                cte.Status.ToString(),
-                EmbarcaProEnumsList.GetCteStatusDescription(cte.Status),
-                cte.TotalServiceValue,
-                cte.AmountReceivable,
-                cte.AccessKey,
-                cte.CreatedAt,
-                cte.AuthorizedAt,
-                cte.CanceledAt,
-                cte.FreightComponents
-                    .Select(fc => new CteFreightComponentResponse(fc.Name, fc.Value))
-                    .ToList());
+            return ServiceResult<CteResponse>.Ok(cte.ToResponse(), successMessage);
         }
     }
 }

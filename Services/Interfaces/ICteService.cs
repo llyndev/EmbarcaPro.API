@@ -7,16 +7,16 @@ namespace EmbarcaPro.API.Services.Interfaces
 {
     public interface ICteService
     {
-        Task<ServiceResult<CteResponse>> CreateCteAsync(CreateCteRequest request);
+        //Task<ServiceResult<CteResponse>> CreateCteAsync(CreateCteRequest request);
 
-        Task<ServiceResult<PagedList<CteResponse>>> GetAllCtesAsync(int page, int pageSize);
+        Task<ServiceResult<PagedList<CteListItemResponse>>> GetAllCtesAsync(int page, int pageSize);
 
         Task<ServiceResult<CteResponse>> GetCteByPublicIdAsync(Guid id);
 
-        Task<ServiceResult<CteResponse>> AuthorizeCteAsync(int id);
+        Task<ServiceResult<CteResponse>> AuthorizeCteAsync(Guid id);
 
-        Task<ServiceResult<CteResponse>> CancelCteAsync(int id);
+        Task<ServiceResult<CteResponse>> CancelCteAsync(Guid id);
 
-        Task<ServiceResult<CteResponse>> DenyCteAsync(int id);
+        Task<ServiceResult<CteResponse>> DenyCteAsync(Guid id);
     }
 }
