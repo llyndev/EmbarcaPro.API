@@ -3,7 +3,6 @@ using EmbarcaPro.API.Common.Pagination;
 using EmbarcaPro.API.Common.Results;
 using EmbarcaPro.API.Data;
 using EmbarcaPro.API.Enums;
-using EmbarcaPro.API.Dtos.Request;
 using EmbarcaPro.API.Dtos.Response;
 using EmbarcaPro.API.Models;
 using EmbarcaPro.API.Services.Interfaces;
@@ -14,35 +13,6 @@ namespace EmbarcaPro.API.Services
 {
     public class CteService(ApplicationDbContext context) : ICteService
     {
-        //public async Task<ServiceResult<CteResponse>> CreateCteAsync(CreateCteRequest request)
-        //{
-        //    var freightExists = await context.Freights.AnyAsync(f => f.Id == request.FreightId);
-        //    if (!freightExists)
-        //        return ServiceResult<CteResponse>.Fail("Viagem (frete) não encontrada.", ErrorType.NotFound);
-
-        //    var numberExists = await context.Ctes.AnyAsync(c => c.Number == request.Number);
-        //    if (numberExists)
-        //        return ServiceResult<CteResponse>.Fail("Já existe um CT-e com este número.", ErrorType.Conflict);
-
-        //    Cte cte;
-        //    try
-        //    {
-        //        cte = new Cte(request.FreightId, request.Number, request.TotalServiceValue, request.AmountReceivable);
-
-        //        foreach (var component in request.FreightComponents)
-        //            cte.AddFreightComponent(component.Name, component.Value);
-        //    }
-        //    catch (ArgumentException ex)
-        //    {
-        //        return ServiceResult<CteResponse>.Fail(ex.Message, ErrorType.Validation);
-        //    }
-
-        //    await context.Ctes.AddAsync(cte);
-        //    await context.SaveChangesAsync();
-
-        //    return ServiceResult<CteResponse>.Ok(cte.ToResponse(), "CT-e criado com sucesso!");
-        //}
-
         public async Task<ServiceResult<PagedList<CteListItemResponse>>> GetAllCtesAsync(int page, int pageSize)
         {
             page = page < 1 ? 1 : page;
