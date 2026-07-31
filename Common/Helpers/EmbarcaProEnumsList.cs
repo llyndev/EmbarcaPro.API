@@ -111,7 +111,7 @@ namespace EmbarcaPro.API.Common.Helpers
             {
                 new KeyDescriptionValue<CteStatus>(CteStatus.Draft, "R"),
                 new KeyDescriptionValue<CteStatus>(CteStatus.Authorized, "A"),
-                new KeyDescriptionValue<CteStatus>(CteStatus.Cancelled, "C"),
+                new KeyDescriptionValue<CteStatus>(CteStatus.Canceled, "C"),
                 new KeyDescriptionValue<CteStatus>(CteStatus.Denied, "D"),
                 new KeyDescriptionValue<CteStatus>(CteStatus.AwaitingAuthorization, "W"),
                 new KeyDescriptionValue<CteStatus>(CteStatus.Rejected, "R"),
