@@ -2,6 +2,7 @@ using EmbarcaPro.API.Common.Helpers;
 using EmbarcaPro.API.Common.Pagination;
 using EmbarcaPro.API.Common.Results;
 using EmbarcaPro.API.Data;
+using EmbarcaPro.API.Enums;
 using EmbarcaPro.API.Dtos.Request;
 using EmbarcaPro.API.Dtos.Response;
 using EmbarcaPro.API.Models;
@@ -41,7 +42,7 @@ namespace EmbarcaPro.API.Services
             return ServiceResult<CteResponse>.Ok(ToResponse(cte), "CT-e criado com sucesso!");
         }
 
-        public async Task<ServiceResult<PagedList<CteResponse>>> GetAllCtesAsync(int page, int pageSize)
+        public async Task<ServiceResult<PagedList<CteListItemResponse>>> GetAllCtesAsync(int page, int pageSize)
         {
             page = page < 1 ? 1 : page;
             pageSize = pageSize is < 1 or > 100 ? 10 : pageSize;
@@ -51,25 +52,54 @@ namespace EmbarcaPro.API.Services
             var totalCount = await query.CountAsync();
 
             var items = await query
-                .Include(c => c.FreightComponents)
                 .OrderByDescending(c => c.CreatedAt)
                 .ThenByDescending(c => c.Id)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
+                .Select(c => new
+                {
+                    c.PublicId,
+                    c.Series,
+                    c.Number,
+                    c.Status,
+                    c.TotalServiceValue,
+                    c.AccessKey,
+                    c.IssueDateTime,
+                    ShipperName = c.Partners
+                        .Where(p => p.Type == PartnerType.Shipper)
+                        .Select(p => p.Partner.LegalNameOrFullName)
+                        .FirstOrDefault(),
+                    ConsigneeName = c.Partners
+                        .Where(p => p.Type == PartnerType.Consignee)
+                        .Select(p => p.Partner.LegalNameOrFullName)
+                        .FirstOrDefault()
+                })
                 .ToListAsync();
 
-            var response = items.Select(ToResponse).ToList();
-            var pagedList = new PagedList<CteResponse>(response, totalCount, page, pageSize);
+            var response = items.Select(c => new CteListItemResponse(
+                c.PublicId,
+                c.Series,
+                c.Number,
+                c.Status.ToResponse(),
+                c.TotalServiceValue,
+                c.AccessKey,
+                c.IssueDateTime,
+                c.ShipperName,
+                c.ConsigneeName
+            )).ToList();
 
-            return ServiceResult<PagedList<CteResponse>>.Ok(pagedList, "CT-es listados com sucesso.");
+            var pagedList = new PagedList<CteListItemResponse>(response, totalCount, page, pageSize);
+
+            return ServiceResult<PagedList<CteListItemResponse>>.Ok(pagedList, "CT-es listados com sucesso.");
         }
 
-        public async Task<ServiceResult<CteResponse>> GetCteByIdAsync(int id)
+        public async Task<ServiceResult<CteResponse>> GetCteByPublicIdAsync(Guid id)
         {
             var cte = await context.Ctes
                 .AsNoTracking()
                 .Include(c => c.FreightComponents)
-                .FirstOrDefaultAsync(c => c.Id == id);
+                .Include(c => c.Cargo).ThenInclude(c => c.Quantities)
+                .FirstOrDefaultAsync(c => c.PublicId == id);
 
             if (cte == null)
                 return ServiceResult<CteResponse>.Fail("CT-e não encontrado.", ErrorType.NotFound);
@@ -77,21 +107,40 @@ namespace EmbarcaPro.API.Services
             return ServiceResult<CteResponse>.Ok(ToResponse(cte), $"CT-e {id}");
         }
 
-        public Task<ServiceResult<CteResponse>> AuthorizeCteAsync(int id)
-            => ChangeStatusAsync(id, cte => cte.Authorize(), "CT-e autorizado com sucesso.");
-
-        public Task<ServiceResult<CteResponse>> CancelCteAsync(int id)
-            => ChangeStatusAsync(id, cte => cte.Cancel(), "CT-e cancelado com sucesso.");
-
-        public Task<ServiceResult<CteResponse>> DenyCteAsync(int id)
-            => ChangeStatusAsync(id, cte => cte.Deny(), "CT-e denegado.");
-
-        private async Task<ServiceResult<CteResponse>> ChangeStatusAsync(
-            int id, Action<Cte> transition, string successMessage)
+        public async Task<ServiceResult<CteResponse>> AuthorizeCteAsync(Guid id)
         {
             var cte = await context.Ctes
                 .Include(c => c.FreightComponents)
-                .FirstOrDefaultAsync(c => c.Id == id);
+                .FirstOrDefaultAsync();
+
+            if (cte == null)
+                return ServiceResult<CteResponse>.Fail("CT-e não encontrado", ErrorType.NotFound);
+
+            try
+            {
+                cte.Authorize();
+            } catch (InvalidOperationException ex)
+            {
+                return ServiceResult<CteResponse>.Fail(ex.Message, ErrorType.Conflict);
+            }
+
+            await context.SaveChangesAsync();
+
+            return ServiceResult<CteResponse>.Ok(ToResponse(cte), "CT-e autorizado com sucesso.");
+        }
+
+        public Task<ServiceResult<CteResponse>> CancelCteAsync(Guid id)
+            => ChangeStatusAsync(id, cte => cte.Cancel(), "CT-e cancelado com sucesso.");
+
+        public Task<ServiceResult<CteResponse>> DenyCteAsync(Guid id)
+            => ChangeStatusAsync(id, cte => cte.Deny(), "CT-e denegado.");
+
+        private async Task<ServiceResult<CteResponse>> ChangeStatusAsync(
+            Guid id, Action<Cte> transition, string successMessage)
+        {
+            var cte = await context.Ctes
+                .Include(c => c.FreightComponents)
+                .FirstOrDefaultAsync(c => c.PublicId == id);
 
             if (cte == null)
                 return ServiceResult<CteResponse>.Fail("CT-e não encontrado.", ErrorType.NotFound);
