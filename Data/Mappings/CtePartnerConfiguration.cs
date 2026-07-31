@@ -18,9 +18,6 @@ namespace EmbarcaPro.API.Data.Mappings
             builder.Property(c => c.Id)
                 .HasColumnName("cte_partner_id");
 
-            builder.Property(c => c.PublicId)
-                .HasColumnName("public_id");
-
             builder.Property(c => c.Type)
                 .HasColumnName("type")
                 .HasConversion(new KeyDescriptionValueConverter<PartnerType>(EmbarcaProEnumsList.GetPartnerType()))

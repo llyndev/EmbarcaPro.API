@@ -16,9 +16,6 @@ namespace EmbarcaPro.API.Data.Mappings
             builder.Property(i => i.Id)
                 .HasColumnName("icms_tax_id");
 
-            builder.Property(i => i.PublicId)
-                .HasColumnName("public_id");
-
             builder.Property(i => i.CteId)
                 .HasColumnName("cte_id")
                 .IsRequired();
