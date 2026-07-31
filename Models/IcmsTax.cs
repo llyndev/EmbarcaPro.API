@@ -16,8 +16,7 @@ namespace EmbarcaPro.API.Models
     public class IcmsTax
     {
         public int Id { get; init; }
-        public Guid PublicId { get; init; } = Guid.NewGuid();
-        public Guid CteId { get; init; }
+        public int CteId { get; init; }
 
         public IcmsTaxSituation Situation { get; init; }
 
@@ -43,7 +42,7 @@ namespace EmbarcaPro.API.Models
 
         protected IcmsTax() { }
 
-        public IcmsTax(Guid cteId, IcmsTaxSituation situation)
+        public IcmsTax(int cteId, IcmsTaxSituation situation)
         {
             CteId = cteId;
             Situation = situation;

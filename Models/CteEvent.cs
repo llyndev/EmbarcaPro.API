@@ -9,8 +9,7 @@ namespace EmbarcaPro.API.Models
     {
 
         public int Id { get; init; }
-        public Guid PublicId { get; init; } = Guid.NewGuid();
-        public Guid CteId { get; init; }
+        public int CteId { get; init; }
 
         public CteEventType Type { get; init; }
         public int SequenceNumber { get; init; } // nSeqEvento - controla mútiplas CC-e, por exemplo
@@ -24,7 +23,7 @@ namespace EmbarcaPro.API.Models
 
         }
 
-        public CteEvent(Guid cteId, CteEventType type, int sequenceNumber, DateTime eventDateTime, string? justification = null)
+        public CteEvent(int cteId, CteEventType type, int sequenceNumber, DateTime eventDateTime, string? justification = null)
         {
             
             // Verifica se o CteEventType é Cancellation ou CorrectionLetter 

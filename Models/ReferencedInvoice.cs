@@ -7,8 +7,7 @@
     public class ReferencedInvoice
     {
         public int Id { get; init; }
-        public Guid PublicId { get; init; } = Guid.NewGuid();
-        public Guid CteId { get; init; }
+        public int CteId { get; init; }
 
         public string NfeAccessKey { get; init; }
         public decimal? InvoiceValue { get; init; }
@@ -16,7 +15,7 @@
 
         protected ReferencedInvoice() { }
 
-        public ReferencedInvoice(Guid cteId, string nfeAccessKey, decimal? invoiceValue = null, string? orderNumber = null)
+        public ReferencedInvoice(int cteId, string nfeAccessKey, decimal? invoiceValue = null, string? orderNumber = null)
         {
             var key = nfeAccessKey.Trim();
 

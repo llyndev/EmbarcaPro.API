@@ -9,9 +9,8 @@ namespace EmbarcaPro.API.Models
     public class CtePartner
     {
         public int Id { get; init; }
-        public Guid PublicId { get; init; } = Guid.NewGuid();
-        public Guid CteId { get; init; }
-        public Guid PartnerId { get; init; }
+        public int CteId { get; init; }
+        public int PartnerId { get; init; }
         public virtual Partner Partner { get; private set; } = null!;
         public PartnerType Type { get; init; }
 
@@ -20,11 +19,9 @@ namespace EmbarcaPro.API.Models
 
         }
 
-        public CtePartner(Guid cteId, Partner partner, PartnerType type)
+        public CtePartner(Partner partner, PartnerType type)
         {
-            CteId = cteId;
             Partner = partner;
-            PartnerId = partner.Id;
             Type = type;
         }
     }

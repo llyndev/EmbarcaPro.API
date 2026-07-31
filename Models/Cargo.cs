@@ -3,8 +3,7 @@
     public class Cargo
     {
         public int Id { get; init; }
-        public Guid PublicId { get; init; } = Guid.NewGuid();
-        public Guid CteId { get; init; }
+        public int CteId { get; init; }
 
         public decimal CargoValue { get; init; } // vCarga
         public string PredominantProduct { get; init; } // proPred
@@ -15,7 +14,7 @@
 
         protected Cargo() { }
 
-        public Cargo(Guid cteId, decimal cargoValue, string predominantProduct, string? otherCharacteristics = null)
+        public Cargo(int cteId, decimal cargoValue, string predominantProduct, string? otherCharacteristics = null)
         {
             CteId = cteId;
             CargoValue = cargoValue;
@@ -24,7 +23,7 @@
         }
 
         public void AddQuantity(string unitCode, string measureType, decimal quantity) =>
-            _quantities.Add(new CargoQuantity(Id, unitCode, measureType, quantity));
+            _quantities.Add(new CargoQuantity(unitCode, measureType, quantity));
 
     }
 }
