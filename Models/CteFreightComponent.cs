@@ -8,16 +8,14 @@ namespace EmbarcaPro.API.Models
     {
 
         public int Id { get; private set; }
-
-        public Guid PublicId { get; init; } = Guid.NewGuid();
-        public int CteId { get; init; }
+        public int CteId { get; private set; }
 
         public string Name { get; init; }
         public decimal Value { get; init; }
 
         protected CteFreightComponent() { }
 
-        public CteFreightComponent(int cteId, string name, decimal value)
+        public CteFreightComponent(string name, decimal value)
         {
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("O nome do componente de frete é obrigatório.");
@@ -25,7 +23,6 @@ namespace EmbarcaPro.API.Models
             if (value <= 0)
                 throw new ArgumentException("O valor do componente de frete deve ser maior que zero.");
           
-            CteId = cteId;
             Name = name.Trim();
             Value = value;
         }

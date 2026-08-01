@@ -21,10 +21,10 @@ namespace EmbarcaPro.API.Data.Mappings
             builder.Property(c => c.PublicId)
                 .HasColumnName("public_id");
 
-            builder.Property(c => c.Id)
-                .HasColumnName("cte_id");
-
             #region Identificação CT-e
+
+            builder.Property(c => c.CompanyId)
+                .HasColumnName("company_id");
 
             builder.Property(c => c.Uf)
                 .HasColumnName("uf")
@@ -145,7 +145,7 @@ namespace EmbarcaPro.API.Data.Mappings
 
             builder.HasOne(c => c.Company)
                 .WithMany()
-               .HasForeignKey(c => c.CompanyId)
+                .HasForeignKey(c => c.CompanyId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // As colecoes sao expostas como IReadOnlyCollection sobre campos privados.
@@ -178,6 +178,10 @@ namespace EmbarcaPro.API.Data.Mappings
 
             builder.HasIndex(c => c.Status)
                 .HasDatabaseName("ix_ctes_status");
+
+            builder.HasIndex(c => c.PublicId)
+                .IsUnique()
+                .HasDatabaseName("ix_ctes_public_id");
 
             #endregion
         }

@@ -61,7 +61,7 @@ namespace EmbarcaPro.API.Models
         public string? SignedXml { get; private set; }
         public string? AuthorizedXml { get; private set; }
         public DateTime AuthorizedAt { get; private set; }
-        public DateTime CancelledAt { get; private set; }
+        public DateTime CanceledAt { get; private set; }
 
         public DateTime CreatedAt { get; private set; }
 
@@ -81,7 +81,6 @@ namespace EmbarcaPro.API.Models
             if (amountReceivable < 0 || amountReceivable > totalServiceValue)
                 throw new ArgumentException("O valor a receber deve estar entre zero e o valor total do serviço.");
           
-            CompanyId = company.Id;
             Company = company;
             Uf = uf.Trim();
             Series = series;
@@ -99,10 +98,16 @@ namespace EmbarcaPro.API.Models
             CreatedAt = DateTime.UtcNow;
         }
       
-              public void AddFreightComponent(int cteId,string name, decimal value)
+        public void AddFreightComponent(string name, decimal value)
         {
             EnsureDraft("adicionar componentes de frete");
-            _freightComponents.Add(new CteFreightComponent(cteId, name, value));
+            _freightComponents.Add(new CteFreightComponent(name, value));
+        }
+
+        public void SetCargo(Cargo cargo)
+        {
+            EnsureDraft("definir carga");
+            Cargo = cargo;
         }
 
         /// <summary>
@@ -137,8 +142,8 @@ namespace EmbarcaPro.API.Models
             if (Status != CteStatus.Authorized)
                 throw new InvalidOperationException("Apenas um CT-e autorizado pode ser cancelado.");
 
-            Status = CteStatus.Cancelled;
-            CancelledAt = DateTime.UtcNow;
+            Status = CteStatus.Canceled;
+            CanceledAt = DateTime.UtcNow;
         }
 
         public void Deny()
