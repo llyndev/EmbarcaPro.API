@@ -73,7 +73,7 @@ namespace EmbarcaPro.API.Extensions
                 cargo.Quantities.Select(q => q.ToResponse()).ToList());
 
         public static CteCargoQuantityResponse ToResponse(this CargoQuantity quantity) =>
-            new(quantity.UnitCode, quantity.MeasureType, quantity.Quantity);
+            new(quantity.UnitCode.ToResponse(), quantity.MeasureType, quantity.Quantity);
 
         public static CteIcmsResponse ToResponse(this IcmsTax icms) =>
             new(icms.Situation.ToResponse(),

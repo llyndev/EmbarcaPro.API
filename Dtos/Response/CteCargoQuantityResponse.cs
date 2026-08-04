@@ -1,8 +1,10 @@
-﻿namespace EmbarcaPro.API.Dtos.Response
+﻿using EmbarcaPro.API.Enums;
+
+namespace EmbarcaPro.API.Dtos.Response
 {
     public record CteCargoQuantityResponse
     (
-        string UnitCode,
+        EnumResponse UnitCode,
         string MeasureType,
         decimal Quantity
 

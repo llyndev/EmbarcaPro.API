@@ -1,4 +1,6 @@
-﻿using EmbarcaPro.API.Models;
+﻿using EmbarcaPro.API.Common.Helpers;
+using EmbarcaPro.API.Enums;
+using EmbarcaPro.API.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -20,7 +22,9 @@ namespace EmbarcaPro.API.Data.Mappings
             builder.Property(q => q.CargoId).HasColumnName("cargo_id").IsRequired();
 
             builder.Property(q => q.UnitCode)
-                .HasColumnName("unit_code").HasMaxLength(2).IsRequired();
+                .HasColumnName("unit_code")
+                .HasConversion(new KeyDescriptionValueConverter<CteUnitCode>(EmbarcaProEnumsList.GetCteUnitCode()))
+                .IsRequired();
 
             builder.Property(q => q.MeasureType)
                 .HasColumnName("measure_type").HasMaxLength(20).IsRequired();
