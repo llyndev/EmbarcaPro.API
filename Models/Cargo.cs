@@ -1,4 +1,6 @@
-﻿namespace EmbarcaPro.API.Models
+﻿using EmbarcaPro.API.Enums;
+
+namespace EmbarcaPro.API.Models
 {
     public class Cargo
     {
@@ -22,7 +24,7 @@
             OtherCharacteristics = otherCharacteristics?.Trim();
         }
 
-        public void AddQuantity(string unitCode, string measureType, decimal quantity) =>
+        public void AddQuantity(CteUnitCode unitCode, string measureType, decimal quantity) =>
             _quantities.Add(new CargoQuantity(unitCode, measureType, quantity));
 
     }

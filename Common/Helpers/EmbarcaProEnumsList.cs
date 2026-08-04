@@ -208,7 +208,25 @@ namespace EmbarcaPro.API.Common.Helpers
         }
         public static string GetCrtTypeValue(CrtType enumItem)
             => GetCrtType().Find(p => p.Enum == enumItem).Value;
-            public static string GetCrtTypeDescription(CrtType enumItem)
+        public static string GetCrtTypeDescription(CrtType enumItem)
             => GetCrtType().Find(p => p.Enum == enumItem).Description;
+
+        // ---------------- CTE Unit Code ----------------
+        public static List<KeyDescriptionValue<CteUnitCode>> GetCteUnitCode()
+        {
+            return new List<KeyDescriptionValue<CteUnitCode>>
+            {
+                new KeyDescriptionValue<CteUnitCode>(CteUnitCode.CubicMeter, "CM"),
+                new KeyDescriptionValue<CteUnitCode>(CteUnitCode.Kilobyte, "KB"),
+                new KeyDescriptionValue<CteUnitCode>(CteUnitCode.Ton, "TO"),
+                new KeyDescriptionValue<CteUnitCode>(CteUnitCode.Unit, "UN"),
+                new KeyDescriptionValue<CteUnitCode>(CteUnitCode.Liters, "LT"),
+                new KeyDescriptionValue<CteUnitCode>(CteUnitCode.Mmbtu, "MM")
+            };
+        }
+        public static string GetCteUnitCodeValue(CteUnitCode enumItem)
+            => GetCteUnitCode().Find(p => p.Enum == enumItem).Value;
+        public static string GetCteUnitCodeDescription(CteUnitCode enumItem)
+            => GetCteUnitCode().Find(p => p.Enum == enumItem).Description;
     }
 }
