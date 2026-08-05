@@ -24,7 +24,7 @@ namespace EmbarcaPro.API.Dtos.Request
         [EnumDataType(typeof(CrtType), ErrorMessage = "Código de Regime Tributário inválido.")]
         public required string CrtCode { get; init; }
 
-        [Required(ErrorMessage = "Endereço é obrigatório.")]
+        [Required(ErrorMessage = "Endereço do emitente obrigatório.")]
         public required AddressRequest Address { get; init; }
 
         [StringLength(8, MinimumLength = 8, ErrorMessage = "RNTRC deve ter 8 dígitos.")]
