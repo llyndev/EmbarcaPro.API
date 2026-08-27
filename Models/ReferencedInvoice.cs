@@ -15,14 +15,8 @@
 
         protected ReferencedInvoice() { }
 
-        public ReferencedInvoice(int cteId, string nfeAccessKey, decimal? invoiceValue = null, string? orderNumber = null)
+        public ReferencedInvoice(string nfeAccessKey, decimal? invoiceValue = null, string? orderNumber = null)
         {
-            var key = nfeAccessKey.Trim();
-
-            if (key.Length != 44)
-                throw new ArgumentException("A chave de acesso da NF-e deve ter 44 dígitos.", nameof(nfeAccessKey));
-
-            CteId = cteId;
             NfeAccessKey = nfeAccessKey.Trim();
             InvoiceValue = invoiceValue;
             OrderNumber = orderNumber?.Trim();

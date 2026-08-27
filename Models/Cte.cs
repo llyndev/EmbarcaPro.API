@@ -110,6 +110,48 @@ namespace EmbarcaPro.API.Models
             Cargo = cargo;
         }
 
+        public void SetIcms(IcmsTax icms)
+        {
+            EnsureDraft("definir icms");
+            Icms = icms;
+        }
+
+        public void AddPartner(Partner partner, PartnerType type)
+        {
+            ArgumentNullException.ThrowIfNull(partner);
+            EnsureDraft("adicionar parceiros");
+
+            if (_partners.Any(p => p.Type == type))
+                throw new InvalidOperationException($"Este CT-e já possuí um parceiro do tipo {type}.");
+
+            _partners.Add(new CtePartner(partner, type));
+        }
+
+        public void RemovePartner(PartnerType type)
+        {
+            EnsureDraft("remover parceiros");
+
+            var existente = _partners.FirstOrDefault(p => p.Type == type);
+            if (existente is not null)
+                _partners.Remove(existente);
+        }
+
+        public void AddReferencedInvoice(string nfeAccessKey, decimal? invoiceValue = null, string? orderNumber = null)
+        {
+            EnsureDraft("adicionar notas fiscais");
+
+            var chave = nfeAccessKey?.Trim() ?? string.Empty;
+
+            if (chave.Length != 44 || !chave.All(char.IsDigit))
+                throw new ArgumentException("A chave de acesso da NF-e deve ter 44 dígitos numéricos.", nameof(nfeAccessKey));
+
+            if (_referencedInvoices.Any(i => i.NfeAccessKey == chave))
+                throw new InvalidOperationException("Este NF-e já está referenciado neste CT-e");
+
+
+            _referencedInvoices.Add(new ReferencedInvoice(chave, invoiceValue, orderNumber));
+        }
+
         /// <summary>
         /// A soma dos componentes de frete deve ser igual ao valor total do serviço.
         /// </summary>

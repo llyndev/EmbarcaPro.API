@@ -9,8 +9,8 @@ namespace EmbarcaPro.API.Models
     public class CtePartner
     {
         public int Id { get; init; }
-        public int CteId { get; init; }
-        public int PartnerId { get; init; }
+        public int CteId { get; private set; }
+        public int PartnerId { get; private set; }
         public virtual Partner Partner { get; private set; } = null!;
         public PartnerType Type { get; init; }
 
