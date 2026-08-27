@@ -69,5 +69,78 @@ namespace EmbarcaPro.API.Dtos.Request
         [Required(ErrorMessage = "As informações de ICMS são obrigatórias.")]
         public required CteIcmsRequest Icms { get; init; }
 
+
+        // Validações que dependem de mais de um campo
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+
+            // A soma dos componentes tem que fechar com o vTPrest, senão o SEFAZ rejeita.
+            var soma = FreightComponents?.Sum(c => c.Value) ?? 0m;
+            if (FreightComponents is { Count: > 0 } && soma != TotalServiceValue)
+            {
+                yield return new ValidationResult(
+                    $"A soma dos componentes ({soma:N2}) deve ser igual ao valor total da prestação ({TotalServiceValue:N2}).",
+                    [nameof(FreightComponents), nameof(TotalServiceValue)]);
+            }
+
+            if (AmountReceivable > TotalServiceValue)
+            {
+                yield return new ValidationResult(
+                    "O valor a receber não pode ser maior que o valor total de prestação.",
+                    [nameof(AmountReceivable)]);
+            }
+
+            if (Partners is { Count: > 0 })
+            {
+                foreach (var papel in new[] { PartnerType.Shipper, PartnerType.Consignee })
+                {
+                    var quantidade = Partners.Count(p => p.Type == papel);
+
+                    if (quantidade == 0)
+                        yield return new ValidationResult(
+                            $"O CT-e exige um parceiro do tipo {papel}.", [nameof(Partners)]);
+                    else if (quantidade > 1)
+                        yield return new ValidationResult(
+                            $"O CT-e admite apenas um parceiro do tipo {papel}.", [nameof(Partners)]);
+                }
+
+                var opcionaisDuplicados = Partners
+                    .Where(p => p.Type is PartnerType.Dispatching or PartnerType.Receiver)
+                    .GroupBy(p => p.Type)
+                    .Where(g => g.Count() > 1)
+                    .Select(g => g.Key.ToString())
+                    .ToList();
+
+                if (opcionaisDuplicados.Count > 0)
+                    yield return new ValidationResult(
+                        $"Há parceiros repetidos nos papéis: {string.Join(", ", opcionaisDuplicados)}.",
+                        [nameof(Partners)]);
+            }
+
+            // Origem e destino iguais indicam erro de digitação no cadastro da rota.
+            if (!string.IsNullOrWhiteSpace(OriginIbgeCode) && OriginIbgeCode == DestinationIbgeCode)
+            {
+                yield return new ValidationResult(
+                    "O município de início e o de fim da prestação não podem ser o mesmo.",
+                    [nameof(DestinationIbgeCode)]);
+                    
+            }
+
+            // A mesma NF-e não pode ser informada
+            var notasDuplicadas = ReferencedInvoices?
+                .GroupBy(i => i.NfeAccessKey)
+                .Where(g => g.Count() > 1)
+                .Select(g => g.Key)
+                .ToList();
+
+            if (notasDuplicadas.Count > 0)
+            {
+                yield return new ValidationResult(
+                    $"NF-e repetida no CT-e: {string.Join(", ", notasDuplicadas)}.",
+                    [nameof(ReferencedInvoices)]);
+            }
+        }
+
     }
 }
