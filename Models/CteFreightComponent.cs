@@ -17,12 +17,9 @@ namespace EmbarcaPro.API.Models
 
         public CteFreightComponent(string name, decimal value)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("O nome do componente de frete é obrigatório.");
 
-            if (value <= 0)
-                throw new ArgumentException("O valor do componente de frete deve ser maior que zero.");
-          
+            ArgumentException.ThrowIfNullOrWhiteSpace(name);
+
             Name = name.Trim();
             Value = value;
         }

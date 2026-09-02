@@ -21,6 +21,8 @@ namespace EmbarcaPro.API.Models
 
         public CtePartner(Partner partner, PartnerType type)
         {
+            ArgumentNullException.ThrowIfNull(partner);
+
             Partner = partner;
             Type = type;
         }

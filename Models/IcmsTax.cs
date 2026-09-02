@@ -16,7 +16,7 @@ namespace EmbarcaPro.API.Models
     public class IcmsTax
     {
         public int Id { get; init; }
-        public int CteId { get; init; }
+        public int CteId { get; private set; }
 
         public IcmsTaxSituation Situation { get; init; }
 
@@ -27,7 +27,7 @@ namespace EmbarcaPro.API.Models
         public decimal? Value { get; init; }
 
         // Deferred
-        public decimal? DefferedPercentage { get; init; }
+        public decimal? DeferredPercentage { get; init; }
         public decimal? DefferedValue { get; init; }
         public decimal? PayableValue { get; init; }
 
@@ -42,9 +42,8 @@ namespace EmbarcaPro.API.Models
 
         protected IcmsTax() { }
 
-        public IcmsTax(int cteId, IcmsTaxSituation situation)
+        public IcmsTax(IcmsTaxSituation situation)
         {
-            CteId = cteId;
             Situation = situation;
         }
         /// <summary>
@@ -52,16 +51,78 @@ namespace EmbarcaPro.API.Models
         /// Cálculo genérico
         /// A alíquota depende da UF de origem, UF de destino, do regime tributário da empresa e de benefícios fiscais estaduais
         /// </summary>
-        public static IcmsTax NormalTaxation(Guid cteId, decimal taxBase, decimal rate) =>
-            new(cteId, IcmsTaxSituation.NormalTaxation)
+        public static IcmsTax NormalTaxation(decimal taxBase, decimal rate) { 
+
+            EnsurePositive(taxBase, nameof(rate));
+            EnsureRate(rate);
+
+            return new IcmsTax(IcmsTaxSituation.NormalTaxation)
             {
                 TaxBase = taxBase,
                 Rate = rate,
-                Value = Math.Round(taxBase * rate / 100m, 2) 
+                Value = Math.Round(taxBase * rate / 100m, 2)
             };
+        }
 
-        // Fábrica para isenção(ICMS40 / 41 / 50)
-        public static IcmsTax Exempt(Guid cteId) =>
-            new(cteId, IcmsTaxSituation.Exempt);
+        /// <summary>
+        /// ICMS20 - Base de cálculo reduzida.
+        /// </summary>
+        public static IcmsTax WithReducedBase(decimal taxBase, decimal reductionPercentage, decimal rate)
+        {
+            EnsurePositive(taxBase, nameof(taxBase));
+            EnsureRate(rate);
+            EnsureRate(reductionPercentage);
+
+            var baseReduzida = Round(taxBase * (100m - reductionPercentage) / 100m);
+
+            return new IcmsTax(IcmsTaxSituation.TaxationWithReducedBase)
+            {
+                TaxBase = baseReduzida,
+                BaseReductionPercentage = reductionPercentage,
+                Rate = rate,
+                Value = Round(baseReduzida * rate / 100m)
+            };
+        }
+
+        // ICMS40/41 - Isento ou não tributado, sem base nem alíquota.
+        public static IcmsTax Exempt() => new(IcmsTaxSituation.Exempt);
+
+        public static IcmsTax NotTaxed() => new(IcmsTaxSituation.NotTaxed);
+
+        // ICMS51 - Diferimento: parte do imposto é postergada.
+        public static IcmsTax Deferred(decimal taxBase, decimal rate, decimal deferredPercentage)
+        {
+            EnsurePositive(taxBase, nameof(taxBase));
+            EnsureRate(rate);
+            EnsureRate(deferredPercentage);
+
+            var integral = Round(taxBase * rate / 100m);
+            var diferido = Round(integral * deferredPercentage / 100m);
+
+            return new IcmsTax(IcmsTaxSituation.Deferred)
+            {
+                TaxBase = taxBase,
+                Rate = rate,
+                Value = integral,
+                DeferredPercentage = deferredPercentage,
+                DefferedValue = diferido,
+                PayableValue = Round(integral - diferido)
+            };
+        }
+
+        private static decimal Round(decimal value) => Math.Round(value, 2, MidpointRounding.AwayFromZero);
+
+        private static void EnsurePositive(decimal value, string paramName)
+        {
+            if (value <= 0)
+                throw new ArgumentException("O valor deve ser maior que zero.", paramName);
+        }
+
+        private static void EnsureRate(decimal rate) {
+
+            if (rate < 0 || rate > 100)
+                throw new ArgumentException("O percentual deve estar entre 0 e 100.", nameof(rate));
+
+        }
     }
 }

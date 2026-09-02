@@ -5,10 +5,10 @@ namespace EmbarcaPro.API.Models
     public class Cargo
     {
         public int Id { get; init; }
-        public int CteId { get; init; }
+        public int CteId { get; private set; }
 
         public decimal CargoValue { get; init; } // vCarga
-        public string PredominantProduct { get; init; } // proPred
+        public string PredominantProduct { get; init; } = null!;// proPred
         public string? OtherCharacteristics { get; init; } // xOutCat
 
         private readonly List<CargoQuantity> _quantities = new();
@@ -16,16 +16,25 @@ namespace EmbarcaPro.API.Models
 
         protected Cargo() { }
 
-        public Cargo(int cteId, decimal cargoValue, string predominantProduct, string? otherCharacteristics = null)
+        public Cargo(decimal cargoValue, string predominantProduct, string? otherCharacteristics = null)
         {
-            CteId = cteId;
+            ArgumentException.ThrowIfNullOrWhiteSpace(predominantProduct);
+
+            if (cargoValue < 0)
+                throw new ArgumentException("O valor da carga deve ser maior que zero.", nameof(cargoValue));
+
             CargoValue = cargoValue;
             PredominantProduct = predominantProduct.Trim();
-            OtherCharacteristics = otherCharacteristics?.Trim();
+            OtherCharacteristics = string.IsNullOrWhiteSpace(otherCharacteristics) ? null : otherCharacteristics.Trim();
         }
 
-        public void AddQuantity(CteUnitCode unitCode, string measureType, decimal quantity) =>
+        public void AddQuantity(CteUnitCode unitCode, string measureType, decimal quantity)
+        {
+            if (quantity <= 0)
+                throw new ArgumentException("A quantidade deve ser maior que zero.", nameof(quantity));
+
             _quantities.Add(new CargoQuantity(unitCode, measureType, quantity));
+        }
 
     }
 }
