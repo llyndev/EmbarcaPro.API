@@ -101,7 +101,7 @@ namespace EmbarcaPro.API.Common.Helpers
         }
         public static string GetCteServiceTypeValue(CteServiceType enumItem)
             => GetCteServiceTypes().Find(p => p.Enum == enumItem).Value;
-        public static string GetCteTypeDescription(CteServiceType enumItem)
+        public static string GetCteServiceTypeDescription(CteServiceType enumItem)
             => GetCteServiceTypes().Find(p => p.Enum == enumItem).Description;
 
         // ---------------- CT-e Status ----------------
@@ -217,7 +217,7 @@ namespace EmbarcaPro.API.Common.Helpers
             return new List<KeyDescriptionValue<CteUnitCode>>
             {
                 new KeyDescriptionValue<CteUnitCode>(CteUnitCode.CubicMeter, "CM"),
-                new KeyDescriptionValue<CteUnitCode>(CteUnitCode.Kilobyte, "KB"),
+                new KeyDescriptionValue<CteUnitCode>(CteUnitCode.Kilogram, "KG"),
                 new KeyDescriptionValue<CteUnitCode>(CteUnitCode.Ton, "TO"),
                 new KeyDescriptionValue<CteUnitCode>(CteUnitCode.Unit, "UN"),
                 new KeyDescriptionValue<CteUnitCode>(CteUnitCode.Liters, "LT"),
