@@ -19,6 +19,15 @@ namespace EmbarcaPro.API.Data.Mappings
             builder.Property(d => d.PublicId)
                 .HasColumnName("public_id");
 
+            builder.Property(d => d.CompanyId)
+                .HasColumnName("company_id")
+                .IsRequired();
+
+            builder.HasOne(d => d.Company)
+                .WithMany()
+                .HasForeignKey(d => d.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.Property(d => d.Name)
                 .HasColumnName("name")
                 .HasMaxLength(150)
@@ -75,6 +84,18 @@ namespace EmbarcaPro.API.Data.Mappings
 
             builder.HasIndex(d => d.Email)
                 .IsUnique();
+
+            builder.HasIndex(d => new { d.CompanyId, d.Cpf })
+                .IsUnique()
+                .HasDatabaseName("ix_drivers_company_cpf");
+
+            builder.HasIndex(d => new { d.CompanyId, d.Cnh })
+                .IsUnique()
+                .HasDatabaseName("ix_drivers_company_cnh");
+
+            builder.HasIndex(d => new { d.CompanyId, d.Email })
+                .IsUnique()
+                .HasDatabaseName("ix_drivers_company_email");
 
         }
     }

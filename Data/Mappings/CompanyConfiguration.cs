@@ -39,10 +39,6 @@ namespace EmbarcaPro.API.Data.Mappings
                 .HasMaxLength(150)
                 .IsRequired(false);
 
-            builder.Property(c => c.TaxRegimeCode)
-                .HasColumnName("tax_regime_code")
-                .IsRequired();
-
             builder.ComplexProperty(x => x.Address, address =>
             {
                 address.Property(a => a.Street).HasColumnName("street").HasMaxLength(150).IsRequired();
@@ -68,10 +64,6 @@ namespace EmbarcaPro.API.Data.Mappings
                 .HasColumnName("issuing_authority_state")
                 .HasMaxLength(2)
                 .IsRequired();
-
-            builder.Property(c => c.IsProductionEnviroment)
-                .HasColumnName("is_production_enviroment")
-                .HasDefaultValue(false);
 
             builder.Property(c => c.CertificateThumbprint)
                 .HasColumnName("certificate_thumbprint")

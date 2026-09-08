@@ -15,6 +15,14 @@ namespace EmbarcaPro.API.Data.Mappings
             builder.Property(t => t.Id)
                 .HasColumnName("truck_id");
 
+            builder.Property(t => t.CompanyId)
+                .HasColumnName("company_id");
+
+            builder.HasOne(t => t.Company)
+                .WithMany()
+                .HasForeignKey(t => t.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.Property(t => t.LicensePlate)
                 .HasColumnName("license_plate")
                 .HasMaxLength(10)
@@ -47,6 +55,10 @@ namespace EmbarcaPro.API.Data.Mappings
 
             builder.Property(t => t.CreatedAt)
                 .HasColumnName("created_at");
+
+            builder.HasIndex(p => new { p.CompanyId, p.LicensePlate })
+                .IsUnique()
+                .HasDatabaseName("ix_trucks_company_licenseplate");
         }
     }
 }

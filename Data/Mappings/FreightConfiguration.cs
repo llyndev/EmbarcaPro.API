@@ -16,6 +16,14 @@ namespace EmbarcaPro.API.Data.Mappings
             builder.Property(f => f.Id)
                 .HasColumnName("freight_id");
 
+            builder.Property(f => f.CompanyId)
+                .HasColumnName("company_id");
+
+            builder.HasOne(f => f.Company)
+                .WithMany()
+                .HasForeignKey(f => f.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.Property(f => f.CargoDescription)
                 .HasColumnName("cargo_description")
                 .HasMaxLength(255)
@@ -65,15 +73,15 @@ namespace EmbarcaPro.API.Data.Mappings
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Relaciomaneto com a Usina de Origem
-            builder.HasOne(f => f.OriginFacility)
+            builder.HasOne(f => f.Origin)
                 .WithMany()
-                .HasForeignKey(f => f.OriginFacilityId)
+                .HasForeignKey(f => f.OriginId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // Relacionamento com a Usina de Destino
-            builder.HasOne(f => f.DestinationFacility)
+            builder.HasOne(f => f.Destination)
                 .WithMany()
-                .HasForeignKey(f => f.DestinationFacilityId)
+                .HasForeignKey(f => f.DestinationId)
                 .OnDelete(DeleteBehavior.Restrict);
 
         }

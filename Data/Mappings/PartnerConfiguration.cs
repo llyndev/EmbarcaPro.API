@@ -17,6 +17,14 @@ namespace EmbarcaPro.API.Data.Mappings
             builder.Property(p => p.PublicId)
                 .HasColumnName("public_id");
 
+            builder.Property(p => p.CompanyId)
+                .HasColumnName("company_id");
+
+            builder.HasOne(p => p.Company)
+                .WithMany()
+                .HasForeignKey(p => p.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.Property(p => p.CnpjOrCpf)
                 .HasColumnName("cpnj_or_cpf")
                 .HasMaxLength(14)
@@ -60,7 +68,10 @@ namespace EmbarcaPro.API.Data.Mappings
 
             builder.HasIndex(p => p.CnpjOrCpf)
                 .IsUnique();
-        }
 
+            builder.HasIndex(p => new { p.CompanyId, p.CnpjOrCpf })
+                .IsUnique()
+                .HasDatabaseName("ix_partners_company_cnpjorcpf");
+        }
     }
 }

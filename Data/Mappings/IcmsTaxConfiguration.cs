@@ -42,7 +42,7 @@ namespace EmbarcaPro.API.Data.Mappings
                 .HasColumnName("value")
                 .HasPrecision(15, 2);
 
-            builder.Property(i => i.DefferedPercentage)
+            builder.Property(i => i.DeferredPercentage)
                 .HasColumnName("deferred_percentage")
                 .HasPrecision(5, 2);
 

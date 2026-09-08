@@ -6,6 +6,9 @@ namespace EmbarcaPro.API.Models
     {
 
         public int Id { get; private set; }
+
+        public int CompanyId { get; private set; }
+        public Company Company { get; private set; } = null!;
         
         // Placa da Carreta
         public string LicensePlate { get; private set; }
@@ -27,9 +30,12 @@ namespace EmbarcaPro.API.Models
 
         protected Trailer() { }
 
-        public Trailer(string licensePlate, int trailerAxle, TrailerType type, string brand, decimal maxCapacityKg, decimal cubicMetersVolume)
+        public Trailer(Company company, string licensePlate, int trailerAxle, TrailerType type, string brand, decimal maxCapacityKg, decimal cubicMetersVolume)
         {
 
+            ArgumentNullException.ThrowIfNull(company);
+
+            Company = company;
             LicensePlate = licensePlate.Replace("-", "").Replace(" ", "").ToUpper().Trim();
             TrailerAxle = trailerAxle;
             Type = type;

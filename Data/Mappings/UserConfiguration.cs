@@ -18,6 +18,8 @@ namespace EmbarcaPro.API.Configurations
 
             builder.Property(user => user.Id).HasColumnName("user_id");
 
+            builder.Property(user => user.PublicId).HasColumnName("public_id");
+
             builder.Property(user => user.Name)
             .HasColumnName("name")
             .HasMaxLength(255)

@@ -6,12 +6,15 @@ namespace EmbarcaPro.API.Models
     {
         public int Id { get; private set; }
 
+        public int CompanyId { get; private set; }
+        public Company Company { get; private set; }
+
         public int DriverId { get; private set; }
         public int TruckId { get; private set; }
         public int TrailerId { get; private set; }
 
-        public int OriginFacilityId { get; private set; }
-        public int DestinationFacilityId { get; private set; }
+        public int OriginId { get; private set; }
+        public int DestinationId { get; private set; }
 
         // Proprietario da Carga
         public string CargoDescription { get; private set; }
@@ -29,19 +32,25 @@ namespace EmbarcaPro.API.Models
         public virtual Driver Driver { get; private set; } = null!;
         public virtual Truck Truck { get; private set; } = null!;
         public virtual Trailer Trailer { get; private set;} = null!;
-        public virtual Facility OriginFacility { get; private set; } = null!;
-        public virtual Facility DestinationFacility { get; private set; } = null!;
+        public virtual Partner Origin { get; private set; } = null!;
+        public virtual Partner Destination { get; private set; } = null!;
+
+
 
         protected Freight() { }
 
-        public Freight(int driverId, int truckId, int trailerId, int originFacilityId, int destinationFacilityId,
+        public Freight(Company company, int driverId, int truckId, int trailerId, int originId, int destinationId,
                         string cargoDescription, decimal estimatedWeightKg, decimal freightValue)
         {
+
+            ArgumentNullException.ThrowIfNull(company);
+
+            Company = company;
             DriverId = driverId;
             TruckId = truckId;
             TrailerId = trailerId;
-            OriginFacilityId = originFacilityId;
-            DestinationFacilityId = destinationFacilityId;
+            OriginId = originId;       
+            DestinationId = destinationId;
 
             CargoDescription = cargoDescription;
             EstimatedWeightKg = estimatedWeightKg;

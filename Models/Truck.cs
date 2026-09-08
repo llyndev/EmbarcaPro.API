@@ -5,6 +5,9 @@
 
         public int Id { get; private set; }
 
+        public int CompanyId { get; private set; }
+        public Company Company { get; private set; } = null!;
+
         // Placa veículo
         public string LicensePlate { get; private set; }
 
@@ -23,8 +26,12 @@
 
         protected Truck() { }
 
-        public Truck(string licensePlate, int truckAxle, string brand, string model, decimal maxCapacityKg)
+        public Truck(Company company, string licensePlate, int truckAxle, string brand, string model, decimal maxCapacityKg)
         {
+
+            ArgumentNullException.ThrowIfNull(company);
+
+            Company = company;
             LicensePlate = licensePlate.ToUpper().Trim();
             TruckAxle = truckAxle;
             Brand = brand;
