@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using EmbarcaPro.API.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace EmbarcaPro.API.Dtos.Request
 {
@@ -19,6 +20,9 @@ namespace EmbarcaPro.API.Dtos.Request
         [Required(ErrorMessage = "A confirmação de senha é obrigatória.")]
         [Compare(nameof(Password), ErrorMessage = "As senhas não conferem")]
         public required string ConfirmPassword { get; init; }
+
+        [Required(ErrorMessage = "A role do usuário é obrigatória.")]
+        public required UserRole role { get; init; }
 
     }
 }
