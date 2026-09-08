@@ -15,10 +15,10 @@ namespace EmbarcaPro.API.Dtos.Request
         public required int TrailerId { get; init; }
 
         [Required(ErrorMessage = "A Origem é obrigatória.")]
-        public required int OriginFacilityId { get; init; }
+        public required int OriginId { get; init; }
 
         [Required(ErrorMessage = "O Destino é obrigatório.")]
-        public required int DestinationFacilityId { get; init; }
+        public required int DestinationId { get; init; }
 
         [Required(ErrorMessage = "A descrição da carga é obrigatória.")]
         [StringLength(255, MinimumLength = 3, ErrorMessage = "A descrição deve ter entre 3 a 255 caracteres.")]

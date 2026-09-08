@@ -11,8 +11,8 @@ namespace EmbarcaPro.API.Enums
         [Description("Metro Cúbico")]
         CubicMeter,
 
-        [Description("Kilobyte")]
-        Kilobyte,
+        [Description("Kilogram")]
+        Kilogram,
 
         [Description("Tonelada")]
         Ton,
