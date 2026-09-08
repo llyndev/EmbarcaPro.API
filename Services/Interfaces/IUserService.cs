@@ -9,8 +9,9 @@ namespace EmbarcaPro.API.Services.Interfaces
 
         Task<ServiceResult<UserResponse>> RegisterUserAsync(RegisterRequest request);
         Task<ServiceResult<LoginResponse>> LoginAsync(LoginRequest request);
+        Task<ServiceResult<OnboardResponse>> OnboardAsync(OnboardRequest request);
 
-        Task<List<UserResponse>> GetAllUserResponseAsync();
+        Task <List<UserResponse>> GetAllUserResponseAsync();
 
         Task<ServiceResult<UserResponse>> GetUserByIdResponseAsync(int id);
 

@@ -15,31 +15,130 @@ using System.Text;
 
 namespace EmbarcaPro.API.Services
 {
-    public class UserService(ApplicationDbContext context, IPasswordService passwordService, IOptions<JwtSettings> jwtOptions) : IUserService
+    public class UserService(
+        ApplicationDbContext context, 
+        IPasswordService passwordService, 
+        IOptions<JwtSettings> jwtOptions, 
+        ICurrentUser currentUser) : IUserService
     {
         private readonly JwtSettings _jwtSettings = jwtOptions.Value;
 
 
+        /// <summary>
+        /// Cria a transportadora e seu primeiro usuário adminitrador.
+        /// </summary>
+        public async Task<ServiceResult<OnboardResponse>> OnboardAsync(OnboardRequest request)
+        {
+            var email = request.Admin.Email.Trim().ToLowerInvariant();
+            var cnpj = Company.OnlyDigits(request.Company.Cnpj);
+
+            var emailEmUso = await context.Users
+                .IgnoreQueryFilters()
+                .AnyAsync(u => u.Email == email);
+
+            if (emailEmUso)
+                return ServiceResult<OnboardResponse>.Fail("E-mail já cadastrado.", ErrorType.Conflict);
+
+            var cnpjEmUso = await context.Companies.AnyAsync(c => c.Cnpj == cnpj);
+
+            if (cnpjEmUso)
+                return ServiceResult<OnboardResponse>.Fail("Já existe uma conta para este CNPJ. Peça um convite ao adminitrador.",
+                    ErrorType.Conflict);
+
+            // TODO: chamar VIACEP
+            var address = new Address(
+                request.Company.Address.Street,
+                request.Company.Address.Number,
+                request.Company.Address.Complement,
+                request.Company.Address.Neighborhood,
+                request.Company.Address.City,
+                request.Company.Address.Uf,
+                request.Company.Address.State,
+                request.Company.Address.IbgeCode,
+                request.Company.Address.ZipCode
+                );
+
+            var company = new Company(
+                cnpj: request.Company.Cnpj,
+                stateTaxId: request.Company.StateTaxId,
+                legalName: request.Company.LegalName,
+                tradeName: request.Company.TradeName,
+                crtCode: request.Company.CrtCode,
+                address: address,
+                issuingAuthorityState: request.Company.IssuingAuthorityState,
+                rntrc: request.Company.Rntrc);
+
+            var user = new User(
+                company: company,
+                name: request.Admin.Name,
+                email: request.Admin.Email,
+                passwordHash: passwordService.HashPassword(request.Admin.Password),
+                role: UserRole.Admin
+                );
+
+            context.Companies.Add(company);
+            context.Users.Add(user);
+
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                return ServiceResult<OnboardResponse>.Fail(
+                    "E-mail ou CNPJ já cadastrado.", ErrorType.Conflict);
+            }
+
+            var token = GenerateJwtToken(user);
+
+            var response = new OnboardResponse(
+                company.PublicId,
+                company.LegalName,
+                user.PublicId,
+                user.Name,
+                user.Email,
+                token);
+
+            return ServiceResult<OnboardResponse>.Ok(response, "Cadastro realizado com sucesso!");
+        }
+
+        /// <summary>
+        /// Adiciona um usuário à empresa do adm autenticado por convite.
+        /// </summary>
         public async Task<ServiceResult<UserResponse>> RegisterUserAsync(RegisterRequest request)
         {
-            var emailExists = await context.Users.AnyAsync(u => u.Email == request.Email);
+
+            var company = await context.Companies.FirstOrDefaultAsync(c => c.Id == currentUser.CompanyId);
+
+            if (company == null)
+                return ServiceResult<UserResponse>.Fail("Empresa não encontrada.", ErrorType.NotFound);
+
+            var emailExists = await context.Users.IgnoreQueryFilters().AnyAsync(u => u.Email == request.Email.Trim().ToLowerInvariant());
 
             if (emailExists)
-            {
                 return ServiceResult<UserResponse>.Fail("Este e-mail já existe.", ErrorType.Conflict);
-            }
+
 
             var hashedPassword = passwordService.HashPassword(request.Password);
 
             var newUser = new User(
+                company,
                 name: request.Name,
                 email: request.Email,
                 passwordHash: hashedPassword,
-                role: UserRole.Consulta
+                role: request.role
             );
 
-            await context.Users.AddAsync(newUser);
-            await context.SaveChangesAsync();
+            context.Users.Add(newUser);
+
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                return ServiceResult<UserResponse>.Fail("E-mail já cadastrado.", ErrorType.Conflict);
+            }
 
             var response = new UserResponse(
                 newUser.Id,
@@ -57,7 +156,7 @@ namespace EmbarcaPro.API.Services
         {
 
             // Verificar se o usuário existe no banco
-            var user = await context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+            var user = await context.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Email == request.Email);
 
             if (user == null)
             {
@@ -97,7 +196,8 @@ namespace EmbarcaPro.API.Services
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                     new Claim(ClaimTypes.Name, user.Name),
                     new Claim(ClaimTypes.Email, user.Email),
-                    new Claim(ClaimTypes.Role, user.Role.ToString())
+                    new Claim(ClaimTypes.Role, user.Role.ToString()),
+                    new Claim(CurrentUser.CompanyIdClaim, user.CompanyId.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryInMinutes),
                 Issuer = _jwtSettings.Issuer,
@@ -168,15 +268,13 @@ namespace EmbarcaPro.API.Services
                 return ServiceResult<UserResponse>.Fail("Usuário já possui este cargo.", ErrorType.Conflict);
             }
 
-            user.Role = request.UserRole;
-
             await context.SaveChangesAsync();
 
             UserResponse response = new UserResponse(
                 Id: user.Id,
                 Name: user.Name,
                 Email: user.Email,
-                Role: user.Role,
+                Role: request.UserRole,
                 Active: user.Active,
                 RegisterDate: user.RegisterDate);
 
