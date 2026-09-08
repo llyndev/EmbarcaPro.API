@@ -34,7 +34,7 @@ namespace EmbarcaPro.API.Models
             // Verifica se existe justificativa
             if (requiresJustification)
             {
-                if (string.IsNullOrWhiteSpace(justification)
+                if (string.IsNullOrWhiteSpace(justification))
                     throw new ArgumentException($"O evento {type} exige justificativa.", nameof(justification));
 
                 var texto = justification.Trim();

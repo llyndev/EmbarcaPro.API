@@ -108,7 +108,7 @@ namespace EmbarcaPro.API.Models
             IsProductionEnvironment = true;
         }
 
-        private static string OnlyDigits(string value) =>
+        public static string OnlyDigits(string value) =>
             new(value.Where(char.IsDigit).ToArray());
     }
 }
