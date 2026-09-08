@@ -7,11 +7,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmbarcaPro.API.Services
 {
-    public class DriverService(ApplicationDbContext context) : IDriverService
+    public class DriverService(ApplicationDbContext context, ICurrentUser currentUser) : IDriverService
     {
 
         public async Task<ServiceResult<Driver>> AddDriverAsync(CreateDriverRequest request)
         {
+
+            var company = await context.Companies
+                .FirstOrDefaultAsync(c => c.Id == currentUser.CompanyId);
+
+            if (company == null)
+                return ServiceResult<Driver>.Fail("Empresa não encontrada.", ErrorType.NotFound);
+
             var cleanCpf = request.Cpf.Replace(".", "").Replace("-", "");
 
             var existingDriver = await context.Set<Driver>()
@@ -36,6 +43,7 @@ namespace EmbarcaPro.API.Services
             );
 
             var driver = new Driver(
+                company,
                 request.Name,
                 request.Phone,
                 request.Email,

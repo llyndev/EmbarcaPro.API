@@ -10,13 +10,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmbarcaPro.API.Services
 {
-    public class FreightService(ApplicationDbContext context) : IFreightService
+    public class FreightService(ApplicationDbContext context, ICurrentUser currentUser) : IFreightService
     {
 
         public async Task<ServiceResult<FreightResponse>> CreateFreightAsync(CreateFreightRequest request)
         {
             // Validar != entre origem e destino
-            if (request.OriginFacilityId == request.DestinationFacilityId)
+            if (request.OriginId == request.DestinationId)
             {
                 return ServiceResult<FreightResponse>.Fail(
                     "A origem e o destino da viagem não podem ser os mesmos.",
@@ -25,12 +25,18 @@ namespace EmbarcaPro.API.Services
                     
             }
 
+            var company = await context.Companies
+                .FirstOrDefaultAsync(c => c.Id == currentUser.CompanyId);
+
+            if (company == null)
+                return ServiceResult<FreightResponse>.Fail("Empresa não encontrada.", ErrorType.NotFound);
+
             var driver = await context.Drivers.FindAsync(request.DriverId);
             var truck = await context.Trucks.FindAsync(request.TruckId);
             var trailer = await context.Trailers.FindAsync(request.TrailerId);
 
-            var originExists = await context.Facilities.AnyAsync(f => f.Id == request.OriginFacilityId && f.IsActive);
-            var destExists = await context.Facilities.AnyAsync(f => f.Id == request.DestinationFacilityId && f.IsActive);
+            var originExists = await context.Partners.AnyAsync(f => f.Id == request.OriginId && f.IsActive);
+            var destExists = await context.Partners.AnyAsync(f => f.Id == request.DestinationId && f.IsActive);
 
             if (driver == null || !driver.IsActive)
                 return ServiceResult<FreightResponse>.Fail(
@@ -63,11 +69,12 @@ namespace EmbarcaPro.API.Services
                     ErrorType.NotFound);
 
             var newFreight = new Freight(
+                company,
                 driverId: request.DriverId,
                 truckId: request.TruckId,
                 trailerId: request.TrailerId,
-                originFacilityId: request.OriginFacilityId,
-                destinationFacilityId: request.DestinationFacilityId,
+                originId: request.OriginId,
+                destinationId: request.DestinationId,
                 cargoDescription: request.CargoDescription,
                 estimatedWeightKg: request.EstimatedWeightKg,
                 freightValue: request.FreightValue
@@ -84,8 +91,8 @@ namespace EmbarcaPro.API.Services
                 driver.Name,
                 truck.LicensePlate,
                 trailer.LicensePlate,
-                newFreight.OriginFacility.Address.City,
-                newFreight.DestinationFacility.Address.City,
+                newFreight.Origin.Address.City,
+                newFreight.Destination.Address.City,
                 newFreight.CargoDescription,
                 newFreight.Status.ToString(),
                 newFreight.FreightValue,
@@ -110,8 +117,8 @@ namespace EmbarcaPro.API.Services
                     f.Driver.Name,
                     f.Truck.LicensePlate,
                     f.Trailer.LicensePlate,
-                    f.OriginFacility.Address.City,
-                    f.DestinationFacility.Address.City,
+                    f.Origin.Address.City,
+                    f.Destination.Address.City,
                     f.CargoDescription,
                     f.Status.ToString(),
                     f.FreightValue,
@@ -134,8 +141,8 @@ namespace EmbarcaPro.API.Services
                     f.Driver.Name,
                     f.Truck.LicensePlate,
                     f.Trailer.LicensePlate,
-                    f.OriginFacility.Address.City,
-                    f.DestinationFacility.Address.City,
+                    f.Origin.Address.City,
+                    f.Destination.Address.City,
                     f.CargoDescription,
                     f.Status.ToString(),
                     f.FreightValue,
@@ -157,8 +164,8 @@ namespace EmbarcaPro.API.Services
                 .Include(f => f.Driver)
                 .Include(f => f.Truck)
                 .Include(f => f.Trailer)
-                .Include(f => f.OriginFacility)
-                .Include(f => f.DestinationFacility)
+                .Include(f => f.Origin)
+                .Include(f => f.Destination)
                 .FirstOrDefaultAsync(f => f.Id == id);
 
             if (freight == null)
@@ -183,8 +190,8 @@ namespace EmbarcaPro.API.Services
                 freight.Driver.Name,
                 freight.Truck.LicensePlate,
                 freight.Trailer.LicensePlate,
-                freight.OriginFacility.Address.City,
-                freight.DestinationFacility.Address.City,
+                freight.Origin.Address.City,
+                freight.Destination.Address.City,
                 freight.CargoDescription,
                 freight.Status.ToString(),
                 freight.FreightValue,
@@ -200,8 +207,8 @@ namespace EmbarcaPro.API.Services
                 .Include(f => f.Driver)
                 .Include(f => f.Truck)
                 .Include(f => f.Trailer)
-                .Include(f => f.OriginFacility)
-                .Include(f => f.DestinationFacility)
+                .Include(f => f.Origin)
+                .Include(f => f.Destination)
                 .FirstOrDefaultAsync(f => f.Id == id);
 
             if (freight == null)
@@ -225,8 +232,8 @@ namespace EmbarcaPro.API.Services
                 freight.Driver.Name,
                 freight.Truck.LicensePlate,
                 freight.Trailer.LicensePlate,
-                freight.OriginFacility.Address.City,
-                freight.DestinationFacility.Address.City,
+                freight.Origin.Address.City,
+                freight.Destination.Address.City,
                 freight.CargoDescription,
                 freight.Status.ToString(),
                 freight.FreightValue,
@@ -242,8 +249,8 @@ namespace EmbarcaPro.API.Services
                 .Include(f => f.Driver)
                 .Include(f => f.Truck)
                 .Include(f => f.Trailer)
-                .Include(f => f.OriginFacility)
-                .Include(f => f.DestinationFacility)
+                .Include(f => f.Origin)
+                .Include(f => f.Destination)
                 .FirstOrDefaultAsync(f => f.Id == id);
 
             if (freight == null)
@@ -267,8 +274,8 @@ namespace EmbarcaPro.API.Services
                 freight.Driver.Name,
                 freight.Truck.LicensePlate,
                 freight.Trailer.LicensePlate,
-                freight.OriginFacility.Address.City,
-                freight.DestinationFacility.Address.City,
+                freight.Origin.Address.City,
+                freight.Destination.Address.City,
                 freight.CargoDescription,
                 freight.Status.ToString(),
                 freight.FreightValue,

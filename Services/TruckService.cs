@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmbarcaPro.API.Services
 {
-    public class TruckService(ApplicationDbContext context) : ITruckService
+    public class TruckService(ApplicationDbContext context, ICurrentUser currentUser) : ITruckService
     {
 
         public async Task<IEnumerable<Truck>> GetAllTrucksAsync()
@@ -17,6 +17,12 @@ namespace EmbarcaPro.API.Services
 
         public async Task<ServiceResult<Truck>> AddTruckAsync(CreateTruckRequest request)
         {
+
+            var company = await context.Companies.FirstOrDefaultAsync(c => c.Id == currentUser.CompanyId);
+
+            if (company == null)
+                return ServiceResult<Truck>.Fail("Empresa não encontrada.", ErrorType.NotFound);
+
             // Verificar se a placa já existe.
             var plateExists = await context.Trucks.AnyAsync(t => t.LicensePlate == request.LicensePlate);
 
@@ -26,6 +32,7 @@ namespace EmbarcaPro.API.Services
             }
 
             var truck = new Truck(
+                company,
                 licensePlate: request.LicensePlate,
                 truckAxle: request.TruckAxle,
                 brand: request.Brand,

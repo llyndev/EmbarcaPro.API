@@ -1,5 +1,6 @@
 using EmbarcaPro.API.Common.Pagination;
 using EmbarcaPro.API.Common.Results;
+using EmbarcaPro.API.Dtos.Request;
 using EmbarcaPro.API.Dtos.Response;
 
 namespace EmbarcaPro.API.Services.Interfaces
@@ -8,6 +9,8 @@ namespace EmbarcaPro.API.Services.Interfaces
     {
         
         Task<ServiceResult<PagedList<CteListItemResponse>>> GetAllCtesAsync(int page, int pageSize);
+
+        //Task<CreateCteRequest> CreateCteAsync(CreateCteRequest request);
 
         Task<ServiceResult<CteResponse>> GetCteByPublicIdAsync(Guid id);
 

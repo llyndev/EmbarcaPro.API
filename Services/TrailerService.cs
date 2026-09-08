@@ -7,10 +7,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EmbarcaPro.API.Services
 {
-    public class TrailerService(ApplicationDbContext context) : ITrailerService
+    public class TrailerService(ApplicationDbContext context, ICurrentUser currentUser) : ITrailerService
     {
         public async Task<ServiceResult<Trailer>> AddTrailerAsync(CreateTrailerRequest request)
         {
+            var company = await context.Companies.FirstOrDefaultAsync(c => c.Id == currentUser.CompanyId);
+
+            if (company == null)
+                return ServiceResult<Trailer>.Fail("Empresa não encontrada.", ErrorType.NotFound);
+
             var cleanPlate = request.LicensePlate.Replace("-", "").Replace(" ", "").ToUpper().Trim();
 
             var plateExists = await context.Trailers.AnyAsync(t => t.LicensePlate == cleanPlate);
@@ -21,6 +26,7 @@ namespace EmbarcaPro.API.Services
             }
 
             var newTrailer = new Trailer(
+                company,
                 licensePlate: request.LicensePlate,
                 trailerAxle: request.TrailerAxle,
                 type: request.Type,
