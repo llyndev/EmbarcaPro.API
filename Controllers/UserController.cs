@@ -29,7 +29,7 @@ namespace EmbarcaPro.API.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = nameof(UserRole.Admin) + "," + nameof(UserRole.Suporte))]
+        [Authorize(Roles = nameof(UserRole.Admin))]
         public async Task<IActionResult> UpdateUserRoleAsync([FromBody] UpdateRoleRequest request)
         {
 

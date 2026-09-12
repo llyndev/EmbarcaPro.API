@@ -259,7 +259,24 @@ namespace EmbarcaPro.API.Services
             var user = await context.Users
                 .FirstOrDefaultAsync(u => u.Id == request.Id);
 
-            if (user == null) {
+            if (user.Id == currentUser.UserId)
+            {
+                return ServiceResult<UserResponse>.Fail("Não é possível alterar o proprio cargo.", ErrorType.Conflict);
+            }
+
+            if (user.Role == UserRole.Admin && request.UserRole != UserRole.Admin)
+            {
+                var adminCount = await context.Users
+                    .CountAsync(u => u.Role == UserRole.Admin &&
+                                u.Active == UserStatus.Active);   
+
+                if (adminCount <= 1)
+                {
+                    return ServiceResult<UserResponse>.Fail("Não é possível rebaixar o último Admin da empresa.", ErrorType.Conflict);
+                }
+            }
+
+            if (user is null) {
                 return ServiceResult<UserResponse>.Fail("Usuário não existe", ErrorType.NotFound);
             }
 
@@ -268,17 +285,19 @@ namespace EmbarcaPro.API.Services
                 return ServiceResult<UserResponse>.Fail("Usuário já possui este cargo.", ErrorType.Conflict);
             }
 
+            user.ChangeRole(request.UserRole);
+
             await context.SaveChangesAsync();
 
             UserResponse response = new UserResponse(
                 Id: user.Id,
                 Name: user.Name,
                 Email: user.Email,
-                Role: request.UserRole,
+                Role: user.Role,
                 Active: user.Active,
                 RegisterDate: user.RegisterDate);
 
-            return ServiceResult<UserResponse>.Ok(response, "Role atualizada");
+            return ServiceResult<UserResponse>.Ok(response, "Cargo atualizado com sucesso.");
 
         }
     }
