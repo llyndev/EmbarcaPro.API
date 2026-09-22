@@ -66,9 +66,6 @@ namespace EmbarcaPro.API.Data.Mappings
                 .HasMaxLength(150)
                 .IsRequired(false);
 
-            builder.HasIndex(p => p.CnpjOrCpf)
-                .IsUnique();
-
             builder.HasIndex(p => new { p.CompanyId, p.CnpjOrCpf })
                 .IsUnique()
                 .HasDatabaseName("ix_partners_company_cnpjorcpf");
