@@ -29,7 +29,7 @@ namespace EmbarcaPro.API.Controllers
             return result.ToActionResult(this);
         }
 
-        [HttpGet("{publicId:guid}")]
+        [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById([FromRoute] Guid id)   
         {
             var result = await cteService.GetCteByPublicIdAsync(id);
@@ -37,7 +37,7 @@ namespace EmbarcaPro.API.Controllers
             return result.ToActionResult(this);
         }
 
-        [HttpPut("{id:int}/authorize")]
+        [HttpPut("{id:guid}/authorize")]
         [Authorize(Roles = nameof(UserRole.Admin))]
         public async Task<IActionResult> Authorize([FromRoute] Guid id)
         {
@@ -46,7 +46,7 @@ namespace EmbarcaPro.API.Controllers
             return result.ToActionResult(this);
         }
 
-        [HttpPut("{id:int}/cancel")]
+        [HttpPut("{id:guid}/cancel")]
         [Authorize(Roles = nameof(UserRole.Admin))]
         public async Task<IActionResult> Cancel([FromRoute] Guid id)
         {
@@ -55,7 +55,7 @@ namespace EmbarcaPro.API.Controllers
             return result.ToActionResult(this);
         }
 
-        [HttpPut("{id:int}/deny")]
+        [HttpPut("{id:guid}/deny")]
         [Authorize(Roles = nameof(UserRole.Admin))]
         public async Task<IActionResult> Deny([FromRoute] Guid id)
         {
