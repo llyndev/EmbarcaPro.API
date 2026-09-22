@@ -9,15 +9,10 @@ namespace EmbarcaPro.API.Dtos.Request
     /// </summary>
     public record CreateCteRequest : IValidatableObject
     {
-
-        [Required(ErrorMessage = "A transportadora emitente é obrigatória.")]
-        public required Guid CompanyPublicId { get; init; }
-
-
         /// <summary>
         /// Viagem que este CT-e documenta. Opcional: nem todo CT-e é de um frete cadastrado
         /// </summary>
-        public Guid? FreightPublicId { get; init; }
+        public int? FreightId { get; init; }
 
         [Required(ErrorMessage = "O tipo de CT-e é obrigatório.")]
         [EnumDataType(typeof(CteType), ErrorMessage = "Tipo de CT-e inválido.")]
