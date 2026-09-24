@@ -14,7 +14,7 @@ namespace EmbarcaPro.API.Dtos.Request
 
         [Required(ErrorMessage = "A razão social ou nome é obrigatório.")]
         [StringLength(150, MinimumLength = 2, ErrorMessage = "O nome deve ter entre 2 a 150 caracteres.")]
-        public required string LegalNamrOrFullName { get; init; }
+        public required string LegalNameOrFullName { get; init; }
 
         [Required(ErrorMessage = "O endereço é obrigatório.")]
         public required AddressRequest Address { get; init; }

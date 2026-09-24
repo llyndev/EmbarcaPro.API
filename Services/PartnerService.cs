@@ -59,7 +59,7 @@ namespace EmbarcaPro.API.Services
             var partner = new Partner(
                 company,
                 cnpjOrCpf: document,
-                legalNameOrFullName: request.LegalNamrOrFullName,
+                legalNameOrFullName: request.LegalNameOrFullName,
                 address: address,
                 stateTaxId: request.StateTaxId,
                 phone: request.Phone,

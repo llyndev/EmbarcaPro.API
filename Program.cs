@@ -54,6 +54,7 @@ builder.Services.AddScoped<ITruckService, TruckService>();
 builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.AddScoped<IFreightService, FreightService>();
 builder.Services.AddScoped<ICteService, CteService>();
+builder.Services.AddScoped<IPartnerService, PartnerService>();
 
 
 builder.Services.AddProblemDetails();
