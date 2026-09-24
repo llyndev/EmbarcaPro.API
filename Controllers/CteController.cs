@@ -63,5 +63,13 @@ namespace EmbarcaPro.API.Controllers
 
             return result.ToActionResult(this);
         }
+
+        [HttpPut("{id:guid}/prepare")]
+        [Authorize(Roles = nameof(UserRole.Admin) + "," + nameof(UserRole.Operacional))]
+        public async Task<IActionResult> Prepare([FromRoute] Guid id)
+        {
+            var result = await cteService.PrepareForTransmissionAsync(id);
+            return result.ToActionResult(this);
+        }
     }
 }

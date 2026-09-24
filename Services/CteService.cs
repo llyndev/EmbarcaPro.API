@@ -25,11 +25,10 @@ namespace EmbarcaPro.API.Services
 
                 await using var transaction = await context.Database.BeginTransactionAsync();
 
-                var companies = await context.Companies
-                    .FromSql($"SEELCT * FROM companies WHERE company_id = {currentUser.CompanyId} FOR UPDATE")
-                    .ToListAsync();
+                await context.Database.ExecuteSqlAsync(
+                        $"SELECT company_id FROM companies WHERE company_id = {currentUser.CompanyId} FOR UPDATE");
 
-                var company = companies.SingleOrDefault();
+                var company = await context.Companies.FirstOrDefaultAsync(c => c.Id == currentUser.CompanyId);
 
                 if (company is null)
                     return ServiceResult<CteResponse>.Fail("Empresa emitente não encontrada.", ErrorType.NotFound);
@@ -110,12 +109,14 @@ namespace EmbarcaPro.API.Services
 
                 try
                 {
+                    context.Ctes.Add(cte);
+                    
                     await context.SaveChangesAsync();
                     await transaction.CommitAsync();
                 }
                 catch (DbUpdateException)
                 {
-                    return ServiceResult<CteResponse>.Fail("Não foi possível gerar a numeração do CT-e. Tentei nvoamente.", ErrorType.Conflict);
+                    return ServiceResult<CteResponse>.Fail("Não foi possível gerar a numeração do CT-e. Tente novamente.", ErrorType.Conflict);
                 }
 
                 return ServiceResult<CteResponse>.Ok(cte.ToResponse(), $"CT-e {cte.Series}/{cte.Number} criado em rascunho.");
@@ -220,6 +221,48 @@ namespace EmbarcaPro.API.Services
                 return ServiceResult<CteResponse>.Fail("CT-e não encontrado.", ErrorType.NotFound);
 
             return ServiceResult<CteResponse>.Ok(cte.ToResponse(), $"CT-e {cte.Series}/{cte.Number}");
+        }
+
+        public async Task<ServiceResult<CteResponse>> PrepareForTransmissionAsync(Guid id)
+        {
+            var cte = await context.Ctes
+                .AsSplitQuery()
+                .Include(c => c.Company)
+                .Include(c => c.Partners).ThenInclude(p => p.Partner)
+                .Include(c => c.FreightComponents)
+                .Include(c => c.Cargo).ThenInclude(c => c!.Quantities)
+                .Include(c => c.Icms)
+                .Include(c => c.ReferencedInvoices)
+                .FirstOrDefaultAsync(c => c.PublicId == id);
+
+            if (cte is null)
+                return ServiceResult<CteResponse>.Fail("CT-e não encontrado.", ErrorType.NotFound);
+
+            try
+            {
+                cte.EnsureReadyForTransmission();
+                cte.AssignAccessKey();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return ServiceResult<CteResponse>.Fail(ex.Message, ErrorType.Conflict);
+            }
+            catch (ArgumentException ex)
+            {
+                return ServiceResult<CteResponse>.Fail(ex.Message, ErrorType.Validation);
+            }
+
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                return ServiceResult<CteResponse>.Fail("Conflito ao gerar a chave de acesso. Tente novamente.",
+                    ErrorType.Conflict);
+            }
+
+            return ServiceResult<CteResponse>.Ok(cte.ToResponse(), $"Chave de acesso gerada: {cte.AccessKey}");
         }
 
         public Task<ServiceResult<CteResponse>> AuthorizeCteAsync(Guid id)

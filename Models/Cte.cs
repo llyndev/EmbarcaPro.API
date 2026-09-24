@@ -1,3 +1,4 @@
+using EmbarcaPro.API.Common.Helpers;
 using EmbarcaPro.API.Enums;
 
 namespace EmbarcaPro.API.Models
@@ -16,6 +17,8 @@ namespace EmbarcaPro.API.Models
         public string Uf { get; private set; } // UF de emissão
         public int Series { get; private set; }
         public int Number { get; private set; }
+        public string NumericCode { get; private set; } = null!;
+        public int IssuenceType { get; private set; } = 1;
         public string AccessKey { get; private set; } // preenchida após autorização
 
 
@@ -105,6 +108,7 @@ namespace EmbarcaPro.API.Models
             Uf = company.Address.Uf;
             Series = company.CurrentSeries;
             Number = company.GetNextCteNumber();
+            NumericCode = CteAccessKeyGerator.GenerateNumericCode(Number);
             CarrierRntrc = company.Rntrc;
 
             Type = type;
@@ -189,6 +193,10 @@ namespace EmbarcaPro.API.Models
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(signedXml);
             EnsureDraft("assinar");
+
+            if (string.IsNullOrWhiteSpace(AccessKey))
+                throw new InvalidOperationException("Gere a chave de acesso antes de assinar o CT-e.");
+            
             EnsureReadyForTransmission();
 
             SignedXml = signedXml;
@@ -254,7 +262,7 @@ namespace EmbarcaPro.API.Models
         /// <summary>
         /// Verifica se o CT-e tem tudo que a SEFAZ exige antes de transmitir.
         /// </summary>
-        private void EnsureReadyForTransmission()
+        public void EnsureReadyForTransmission()
         {
             if (Cargo is null)
                 throw new InvalidOperationException("Informe os dados da carga antes de enviar o CT-e ao sefaz.");
@@ -297,6 +305,35 @@ namespace EmbarcaPro.API.Models
 
         public Partner? GetPartner(PartnerType type) =>
             _partners.FirstOrDefault(p => p.Type == type)?.Partner;
+        
+        /// <summary>
+        /// Gera e fixa a chave de acesso de 44 dígitos.
+        /// </summary>
+        /// <param name="issuenceType"></param>
+        public void AssignAccessKey(int issuenceType = 1)
+        {
+            EnsureDraft("gerar a chave de acesso");
+
+            if (!string.IsNullOrWhiteSpace(AccessKey))
+                return;
+
+            if (Company is null)
+                throw new InvalidOperationException("A empresa emitente precisa estar carregada para gerar a chave.");
+
+            // Os 2 primeiros dígitos do código IBGE do município é o código da UF.
+            var ufibgeCode = Company.Address.IbgeCode[..2];
+
+            AccessKey = CteAccessKeyGerator.Generate(
+                ufibgeCode,
+                IssueDateTime,
+                Company.Cnpj,
+                Series,
+                Number,
+                NumericCode,
+                IssuenceType);
+
+            IssuenceType = issuenceType;
+        }
 
 
     }

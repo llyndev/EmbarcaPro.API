@@ -39,6 +39,15 @@ namespace EmbarcaPro.API.Data.Mappings
                 .HasColumnName("number")
                 .IsRequired();
 
+            builder.Property(c => c.NumericCode)
+                .HasColumnName("numeric_code")
+                .HasMaxLength(8)
+                .IsRequired();
+
+            builder.Property(c => c.IssuenceType)
+                .HasColumnName("issuence_type")
+                .IsRequired();
+
             builder.Property(c => c.AccessKey)
                 .HasColumnName("access_key")
                 .HasMaxLength(44)
