@@ -25,6 +25,10 @@ namespace EmbarcaPro.API.Dtos.Request
         [Required(ErrorMessage = "O modal de transporte é obrigatório.")]
         [EnumDataType(typeof(CteTransportMode), ErrorMessage = "Modal de transporte inválido.")]
         public required CteTransportMode TransportMode { get; init; }
+        
+        [Required(ErrorMessage = "O tomador do serviço e obrigatório.")]
+        [EnumDataType(typeof(PartnerType), ErrorMessage = "Tomador inválido.")]
+        public required PartnerType Taker { get; init; }
 
         [Required(ErrorMessage = "O CFOP é obrigatório.")]
         [RegularExpression(@"^\d{4}$", ErrorMessage = "O CFOP deve ter 4 dígitos.")]
@@ -69,6 +73,10 @@ namespace EmbarcaPro.API.Dtos.Request
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
+
+            if (Partners?.Any(p => p.Type == Taker) != true)
+                yield return new ValidationResult($"O tomador informado ({Taker}) precisa estar na lista de parceiros.",
+                    [nameof(Taker)]);
 
             // A soma dos componentes tem que fechar com o vTPrest, senão o SEFAZ rejeita.
             var soma = FreightComponents?.Sum(c => c.Value) ?? 0m;

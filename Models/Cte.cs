@@ -29,7 +29,8 @@ namespace EmbarcaPro.API.Models
         public string PredominantCfop { get; private set; } = null!;
         public string OriginIbgeCityCode { get; private set; } = null!; // munícipio de início de prestação
         public string DestinationIbgeCityCode { get; private set; } = null!; // munícipio de fim de prestação
-
+        public PartnerType Taker { get; private set; }
+        
         // Informações emitente CT-e
         public int CompanyId { get; private set; }
         public virtual Company Company { get; private set; } = null!;
@@ -41,7 +42,6 @@ namespace EmbarcaPro.API.Models
         // Informações rem, dest, exped, receb
         private readonly List<CtePartner> _partners = new();
         public virtual IReadOnlyCollection<CtePartner> Partners => _partners.AsReadOnly();
-
 
         // Valores de prestação
         public decimal TotalServiceValue { get; private set; } // vTPrest
@@ -84,6 +84,7 @@ namespace EmbarcaPro.API.Models
             CteType type,
             CteServiceType serviceType,
             CteTransportMode transportMode,
+            PartnerType taker,
             string predominantCfop,
             string originIbgeCode,
             string destinationIbgeCode,
@@ -96,6 +97,9 @@ namespace EmbarcaPro.API.Models
             ArgumentException.ThrowIfNullOrWhiteSpace(originIbgeCode);
             ArgumentException.ThrowIfNullOrWhiteSpace(destinationIbgeCode);
 
+            if (!Enum.IsDefined(taker))
+                throw new ArgumentException("Tomador do serviço inválido.", nameof(taker));
+            
             if (totalServiceValue <= 0)
                 throw new ArgumentException("O valor total do serviço deve ser maior que zero.");
 
@@ -114,6 +118,7 @@ namespace EmbarcaPro.API.Models
             Type = type;
             ServiceType = serviceType;
             TransportMode = transportMode;
+            Taker = taker;
             PredominantCfop = predominantCfop.Trim();
             OriginIbgeCityCode = originIbgeCode.Trim();
             DestinationIbgeCityCode = destinationIbgeCode.Trim();
@@ -280,6 +285,10 @@ namespace EmbarcaPro.API.Models
                     throw new InvalidOperationException($"O CT-e exige um parceiro do tipo {papel}.");
 
             }
+
+            if (!_partners.Any(p => p.Type == Taker))
+                throw new InvalidOperationException(
+                    $"O tomadro de serviço ({Taker}) precisa estar cadastrado como parceiro deste CT-e.");
 
             if (TransportMode == CteTransportMode.Road && string.IsNullOrWhiteSpace(CarrierRntrc))
                 throw new InvalidOperationException("O RNTRC é obrigatório no modal rodoviário.");
