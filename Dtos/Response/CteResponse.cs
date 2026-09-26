@@ -16,6 +16,7 @@ namespace EmbarcaPro.API.Dtos.Response
         public required EnumResponse Type { get; init; }
         public required EnumResponse ServiceType { get; init; }
         public required EnumResponse TransportMode { get; init; }
+        public EnumResponse Taker { get; init; }
         public required string PredominantCfop { get; init; }
         public required string OriginIbgeCityCode { get; init; }
         public required string DestinationIbgeCityCode { get; init; }

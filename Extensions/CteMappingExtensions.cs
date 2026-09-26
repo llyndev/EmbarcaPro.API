@@ -23,6 +23,7 @@ namespace EmbarcaPro.API.Extensions
                 Type = cte.Type.ToResponse(),
                 ServiceType = cte.ServiceType.ToResponse(),
                 TransportMode = cte.TransportMode.ToResponse(),
+                Taker = cte.Taker.ToResponse(),
                 PredominantCfop = cte.PredominantCfop,
                 OriginIbgeCityCode = cte.OriginIbgeCityCode,
                 DestinationIbgeCityCode = cte.DestinationIbgeCityCode,

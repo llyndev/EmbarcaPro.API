@@ -33,6 +33,8 @@ namespace EmbarcaPro.API.Data
 
         public DbSet<Cte> Ctes { get; set; }
 
+        public DbSet<City> Cities => Set<City>();
+
         protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
         {
             base.ConfigureConventions(configurationBuilder);

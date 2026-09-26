@@ -69,6 +69,12 @@ namespace EmbarcaPro.API.Data.Mappings
                 .HasMaxLength(5)
                 .IsRequired();
 
+            builder.Property(c => c.Taker)
+                .HasColumnName("taker")
+                .HasConversion(new KeyDescriptionValueConverter<PartnerType>(EmbarcaProEnumsList.GetPartnerType()))
+                .HasMaxLength(5)
+                .IsRequired();
+
             builder.Property(c => c.TransportMode)
                 .HasColumnName("transport_mode")
                 .HasConversion(new KeyDescriptionValueConverter<CteTransportMode>(EmbarcaProEnumsList.GetCteTransportMode()))

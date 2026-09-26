@@ -70,8 +70,8 @@ namespace EmbarcaPro.API.Models
         public string? SignedXml { get; private set; }
         public string? AuthorizedXml { get; private set; }
 
-        public DateTime AuthorizedAt { get; private set; }
-        public DateTime CanceledAt { get; private set; }
+        public DateTime? AuthorizedAt { get; private set; }
+        public DateTime? CanceledAt { get; private set; }
         public DateTime CreatedAt { get; private set; }
 
         private readonly List<CteEvent> _events = new();
