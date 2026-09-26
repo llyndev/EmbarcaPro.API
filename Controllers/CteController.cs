@@ -1,3 +1,4 @@
+using System.Text;
 using EmbarcaPro.API.Dtos.Request;
 using EmbarcaPro.API.Enums;
 using EmbarcaPro.API.Extensions;
@@ -70,6 +71,18 @@ namespace EmbarcaPro.API.Controllers
         {
             var result = await cteService.PrepareForTransmissionAsync(id);
             return result.ToActionResult(this);
+        }
+
+        [HttpGet("{id:guid}/xml")]
+        [Authorize(Roles = nameof(UserRole.Admin) + "," + nameof(UserRole.Operacional))]
+        public async Task<IActionResult> GetXml([FromRoute] Guid id)
+        {
+            var result = await cteService.GenerateXmlPreviewAsync(id);
+
+            if (!result.Success)
+                return result.ToActionResult(this);
+
+            return Content(result.Data!, "text/xml", Encoding.UTF8);
         }
     }
 }

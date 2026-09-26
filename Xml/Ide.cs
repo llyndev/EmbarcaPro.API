@@ -22,7 +22,7 @@ public class Ide
 
     [XmlElement("serie")] public int Serie { get; set; }
     
-    [XmlElement("NCt")] public int NCt { get; set; }
+    [XmlElement("nCT")] public int NCt { get; set; }
 
     // Data/hora de emissão no formato ISO com fuso.
     [XmlElement("dhEmi")] public string DhEmi { get; set; } = null!;
@@ -40,7 +40,7 @@ public class Ide
     [XmlElement("tpAmb")] public int TpAmb { get; set; } = 2;
     
     // Tipo do CT-e: 0 = normal, 1 = complemento de valores, 2 = anulação, 3 = substituto.
-    [XmlElement("tpCte")] public int TpCte { get; set; }
+    [XmlElement("tpCTe")] public int TpCte { get; set; }
 
     // Processo de emissão: 0 = aplicativo do contribuinte.
     [XmlElement("procEmi")] public int ProcEmi { get; set; } = 0;
