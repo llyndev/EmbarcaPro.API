@@ -9,4 +9,14 @@ public class InfCte
     [XmlAttribute("versao")] public string Versao { get; set; } = "4.00";
 
     [XmlElement("ide")] public Ide Ide { get; set; } = new();
+
+    [XmlElement("emit")] public Emit Emit { get; set; } = new();
+    
+    [XmlElement("rem")] public Rem? Rem { get; set; }
+    
+    [XmlElement("exped")] public Exped? Exped { get; set; }
+    
+    [XmlElement("receb")] public Receb? Receb { get; set; }
+    
+    [XmlElement("dest")] public Dest? Dest { get; set; }
 }

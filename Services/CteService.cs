@@ -302,13 +302,17 @@ namespace EmbarcaPro.API.Services
                 return ServiceResult<string>.Fail("Gere a chave de acesso (prepare) antes de montar o XML.",
                     ErrorType.Conflict);
 
-            var codes = new[]
+            var codes = new List<string>
             {
                 cte.OriginIbgeCityCode,
                 cte.DestinationIbgeCityCode,
                 cte.Company.Address.IbgeCode
-            }.Distinct().ToList();
+            };
 
+            codes.AddRange(cte.Partners.Select(p => p.Partner.Address.IbgeCode));
+
+            codes = codes.Distinct().ToList();
+            
             var cities = await context.Cities
                 .AsNoTracking()
                 .Where(c => codes.Contains(c.IbgeCode))
@@ -319,6 +323,13 @@ namespace EmbarcaPro.API.Services
             if (faltando.Count > 0)
                 return ServiceResult<string>.Fail("Município não encontrado na tabela IBGE", ErrorType.NotFound);
 
+            T? MapPartner<T>(PartnerType type, Func<Partner, City, T> map) where T : class
+            {
+                var link = cte.Partners.FirstOrDefault(p => p.Type == type);
+
+                return link is null ? null : map(link.Partner, cities[link.Partner.Address.IbgeCode]);
+            }
+            
             var cteXml = new CteXml
             {
                 InfCte = new InfCte
@@ -329,7 +340,14 @@ namespace EmbarcaPro.API.Services
                         cte,
                         cities[cte.OriginIbgeCityCode],
                         cities[cte.DestinationIbgeCityCode],
-                        cities[cte.Company.Address.IbgeCode])
+                        cities[cte.Company.Address.IbgeCode]),
+                    
+                    Emit = EmitMapper.Map(cte.Company, cities[cte.Company.Address.IbgeCode]),
+                    
+                    Rem = MapPartner(PartnerType.Shipper, PartnerMapper.MapRem),
+                    Exped = MapPartner(PartnerType.Dispatching, PartnerMapper.MapExped),
+                    Receb = MapPartner(PartnerType.Receiver, PartnerMapper.MapReceb),
+                    Dest = MapPartner(PartnerType.Consignee, PartnerMapper.MapDest)
                 }
             };
 
