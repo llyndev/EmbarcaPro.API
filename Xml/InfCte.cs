@@ -19,4 +19,12 @@ public class InfCte
     [XmlElement("receb")] public Receb? Receb { get; set; }
     
     [XmlElement("dest")] public Dest? Dest { get; set; }
+
+    [XmlElement("vPrest")] public VPrest VPrest { get; set; } = new();
+
+    [XmlElement("imp")] public Imp Imp { get; set; } = new();
+
+    [XmlElement("infCTeNorm")] public InfCteNorm InfCteNorm { get; set; } = new();
+
+    [XmlElement("infRespTec")] public InfRespTec InfRespTec { get; set; } = new();
 }

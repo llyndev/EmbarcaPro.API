@@ -44,5 +44,25 @@ internal static class CteXmlCodes
         _ => throw new InvalidOperationException($"Tipo de serviço sem código: {type}")
     };
 
+    public static string UnitCode(CteUnitCode unit) => unit switch
+    {
+        CteUnitCode.CubicMeter => "00",
+        CteUnitCode.Kilogram => "01",
+        CteUnitCode.Ton => "02",
+        CteUnitCode.Unit => "03",
+        CteUnitCode.Liters => "04",
+        CteUnitCode.Mmbtu => "05",
+        _ => throw new InvalidOperationException($"Unidade sem código: {unit}.")
+    };
+
+    public static string Crt(CrtType crt) => crt switch
+    {
+        CrtType.SimplifiedTaxation => "1",
+        CrtType.SimplifiedTaxationExcessSublimit => "2",
+        CrtType.NormalRegime => "3",
+        CrtType.IndividualMicroentrepreneur => "4",
+        _ => throw new InvalidOperationException($"Regime tributário sem código: {crt}.")
+    };
+
     public static int Enviroment(bool isProduction) => isProduction ? 1 : 2;
 }

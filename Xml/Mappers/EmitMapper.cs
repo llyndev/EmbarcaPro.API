@@ -36,7 +36,9 @@ internal static class EmitMapper
                 Cep = Company.OnlyDigits(address.ZipCode),
                 Uf = address.Uf,
                 Fone = XmlText.NormalizeOptional(Company.OnlyDigits(address.Phone ?? ""), 14)
-            }
+            },
+            
+            Crt = CteXmlCodes.Crt(company.CrtCode)
         };
     }
 }

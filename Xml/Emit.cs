@@ -18,4 +18,6 @@ public class Emit
     public bool ShouldSErializeXFant() => !string.IsNullOrWhiteSpace(XFant);
 
     [XmlElement("enderEmit")] public EnderEmit EnderEmit { get; set; } = new();
+
+    [XmlElement("CRT")] public string Crt { get; set; } = null!;
 }
