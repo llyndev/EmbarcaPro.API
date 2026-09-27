@@ -4,7 +4,7 @@
     (
         decimal CargoValue,
         string PredominantProduct,
-        string? OtherCharactereistics,
+        string? OtherCharacteristics,
         IReadOnlyCollection<CteCargoQuantityResponse> Quantities
         );
 }
