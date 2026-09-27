@@ -1,4 +1,5 @@
 using System.Text;
+using EmbarcaPro.API.Common.Helpers;
 using EmbarcaPro.API.Dtos.Request;
 using EmbarcaPro.API.Enums;
 using EmbarcaPro.API.Extensions;
@@ -83,6 +84,25 @@ namespace EmbarcaPro.API.Controllers
                 return result.ToActionResult(this);
 
             return Content(result.Data!, "text/xml", Encoding.UTF8);
+        }
+
+        [HttpGet("{id:guid}/xml/validate")]
+        [Authorize(Roles = nameof(UserRole.Admin) + "," + nameof(UserRole.Operacional))]
+        public async Task<IActionResult> ValidateXml([FromRoute] Guid id)
+        {
+            var result = await cteService.GenerateXmlPreviewAsync(id);
+
+            if (!result.Success)
+                return result.ToActionResult(this);
+
+            var errors = CteXmlValidator.Validate(result.Data!);
+
+            return Ok(new
+            {
+                valid = errors.Count == 0,
+                errorCount = errors.Count,
+                errors
+            });
         }
     }
 }
