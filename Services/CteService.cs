@@ -2,6 +2,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 using EmbarcaPro.API.Common.Helpers;
+using EmbarcaPro.API.Common.Options;
 using EmbarcaPro.API.Common.Pagination;
 using EmbarcaPro.API.Common.Results;
 using EmbarcaPro.API.Data;
@@ -14,10 +15,12 @@ using EmbarcaPro.API.Extensions;
 using EmbarcaPro.API.Dtos.Request;
 using EmbarcaPro.API.Xml;
 using EmbarcaPro.API.Xml.Mappers;
+using Microsoft.Extensions.Options;
+using XmlText = EmbarcaPro.API.Common.Helpers.XmlText;
 
 namespace EmbarcaPro.API.Services
 {
-    public class CteService(ApplicationDbContext context, ICurrentUser currentUser) : ICteService
+    public class CteService(ApplicationDbContext context, ICurrentUser currentUser, IOptions<TechnicalResponsibleOptions> techResponsible) : ICteService
     {
 
         public async Task<ServiceResult<CteResponse>> CreateCteAsync(CreateCteRequest request)
@@ -293,6 +296,10 @@ namespace EmbarcaPro.API.Services
                 .AsSplitQuery()
                 .Include(c => c.Company)
                 .Include(c => c.Partners).ThenInclude(p => p.Partner)
+                .Include(c => c.FreightComponents)
+                .Include(c => c.Icms)
+                .Include(c => c.Cargo).ThenInclude(c => c!.Quantities)
+                .Include(c => c.ReferencedInvoices)
                 .FirstOrDefaultAsync(c => c.PublicId == id);
 
             if (cte is null)
@@ -347,7 +354,20 @@ namespace EmbarcaPro.API.Services
                     Rem = MapPartner(PartnerType.Shipper, PartnerMapper.MapRem),
                     Exped = MapPartner(PartnerType.Dispatching, PartnerMapper.MapExped),
                     Receb = MapPartner(PartnerType.Receiver, PartnerMapper.MapReceb),
-                    Dest = MapPartner(PartnerType.Consignee, PartnerMapper.MapDest)
+                    Dest = MapPartner(PartnerType.Consignee, PartnerMapper.MapDest),
+                    VPrest = VPrestMapper.Map(cte),
+                    
+                    Imp = cte.Icms is null ? throw new InvalidOperationException("O CT-e não tem tributação de ICMS definida.") : ImpMapper.Map(cte.Icms),
+                    
+                    InfCteNorm = InfCteNormMapper.Map(cte),
+                    
+                    InfRespTec = new InfRespTec
+                    {
+                        Cnpj = Company.OnlyDigits(techResponsible.Value.Cnpj),
+                        XContato = XmlText.Normalize(techResponsible.Value.Contact, 60),
+                        Email = techResponsible.Value.Email,
+                        Fone = Company.OnlyDigits(techResponsible.Value.Phone)
+                    }
                 }
             };
 

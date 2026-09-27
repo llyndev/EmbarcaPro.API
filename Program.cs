@@ -9,8 +9,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using System.Text;
-
+using System.Text.Json.Serialization;
 using DotNetEnv;
+using EmbarcaPro.API.Common.Options;
 
 Env.Load();
 
@@ -18,7 +19,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 var connectionString = Environment.GetEnvironmentVariable("NEON_CONNECTION_STRING");
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -56,9 +61,11 @@ builder.Services.AddScoped<IFreightService, FreightService>();
 builder.Services.AddScoped<ICteService, CteService>();
 builder.Services.AddScoped<IPartnerService, PartnerService>();
 
-
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+builder.Services.Configure<TechnicalResponsibleOptions>(
+    builder.Configuration.GetSection(TechnicalResponsibleOptions.SectionName));
 
 var jwtSection = builder.Configuration.GetSection(JwtSettings.SectionName);
 builder.Services.Configure<JwtSettings>(jwtSection);
