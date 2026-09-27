@@ -23,5 +23,9 @@ namespace EmbarcaPro.API.Services.Interfaces
         Task<ServiceResult<CteResponse>> PrepareForTransmissionAsync(Guid id);
 
         Task<ServiceResult<string>> GenerateXmlPreviewAsync(Guid id);
+
+        Task<ServiceResult<CteResponse>> SignCteAsync(Guid id);
+
+        Task<ServiceResult<string>> GetSignedXmlAsync(Guid id);
     }
 }

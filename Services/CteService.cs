@@ -20,7 +20,7 @@ using XmlText = EmbarcaPro.API.Common.Helpers.XmlText;
 
 namespace EmbarcaPro.API.Services
 {
-    public class CteService(ApplicationDbContext context, ICurrentUser currentUser, IOptions<TechnicalResponsibleOptions> techResponsible) : ICteService
+    public class CteService(ApplicationDbContext context, ICurrentUser currentUser, IOptions<TechnicalResponsibleOptions> techResponsible, CteSigner signer) : ICteService
     {
 
         public async Task<ServiceResult<CteResponse>> CreateCteAsync(CreateCteRequest request)
@@ -241,7 +241,7 @@ namespace EmbarcaPro.API.Services
                 .Include(c => c.Events)
                 .FirstOrDefaultAsync(c => c.PublicId == id);
 
-            if (cte == null)
+            if (cte is null)
                 return ServiceResult<CteResponse>.Fail("CT-e não encontrado.", ErrorType.NotFound);
 
             return ServiceResult<CteResponse>.Ok(cte.ToResponse(), $"CT-e {cte.Series}/{cte.Number}");
@@ -305,75 +305,11 @@ namespace EmbarcaPro.API.Services
             if (cte is null)
                 return ServiceResult<string>.Fail("CT-e não encontrado.", ErrorType.NotFound);
 
-            if (string.IsNullOrWhiteSpace(cte.AccessKey))
-                return ServiceResult<string>.Fail("Gere a chave de acesso (prepare) antes de montar o XML.",
-                    ErrorType.Conflict);
-
-            var codes = new List<string>
-            {
-                cte.OriginIbgeCityCode,
-                cte.DestinationIbgeCityCode,
-                cte.Company.Address.IbgeCode
-            };
-
-            codes.AddRange(cte.Partners.Select(p => p.Partner.Address.IbgeCode));
-
-            codes = codes.Distinct().ToList();
-            
-            var cities = await context.Cities
-                .AsNoTracking()
-                .Where(c => codes.Contains(c.IbgeCode))
-                .ToDictionaryAsync(c => c.IbgeCode);
-
-            var faltando = codes.Where(c => !cities.ContainsKey(c)).ToList();
-
-            if (faltando.Count > 0)
-                return ServiceResult<string>.Fail("Município não encontrado na tabela IBGE", ErrorType.NotFound);
-
-            T? MapPartner<T>(PartnerType type, Func<Partner, City, T> map) where T : class
-            {
-                var link = cte.Partners.FirstOrDefault(p => p.Type == type);
-
-                return link is null ? null : map(link.Partner, cities[link.Partner.Address.IbgeCode]);
-            }
-            
-            var cteXml = new CteXml
-            {
-                InfCte = new InfCte
-                {
-                    Id = $"CTe{cte.AccessKey}",
-                    Versao = "4.00",
-                    Ide = IdeMapper.Map(
-                        cte,
-                        cities[cte.OriginIbgeCityCode],
-                        cities[cte.DestinationIbgeCityCode],
-                        cities[cte.Company.Address.IbgeCode]),
-                    
-                    Emit = EmitMapper.Map(cte.Company, cities[cte.Company.Address.IbgeCode]),
-                    
-                    Rem = MapPartner(PartnerType.Shipper, PartnerMapper.MapRem),
-                    Exped = MapPartner(PartnerType.Dispatching, PartnerMapper.MapExped),
-                    Receb = MapPartner(PartnerType.Receiver, PartnerMapper.MapReceb),
-                    Dest = MapPartner(PartnerType.Consignee, PartnerMapper.MapDest),
-                    VPrest = VPrestMapper.Map(cte),
-                    
-                    Imp = cte.Icms is null ? throw new InvalidOperationException("O CT-e não tem tributação de ICMS definida.") : ImpMapper.Map(cte.Icms),
-                    
-                    InfCteNorm = InfCteNormMapper.Map(cte),
-                    
-                    InfRespTec = new InfRespTec
-                    {
-                        Cnpj = Company.OnlyDigits(techResponsible.Value.Cnpj),
-                        XContato = XmlText.Normalize(techResponsible.Value.Contact, 60),
-                        Email = techResponsible.Value.Email,
-                        Fone = Company.OnlyDigits(techResponsible.Value.Phone)
-                    }
-                }
-            };
-
             try
             {
-                return ServiceResult<string>.Ok(Serialize(cteXml), "XML gerado.");
+                var cteXml = await BuildXmlAsync(cte);
+
+                return ServiceResult<string>.Ok(Serialize(cteXml, indent: true), "XML gerado.");
             }
             catch (InvalidOperationException ex)
             {
@@ -381,11 +317,11 @@ namespace EmbarcaPro.API.Services
             }
         }
 
-        public static string Serialize(CteXml cteXml)
+        private static string Serialize(CteXml cteXml, bool indent)
         {
             var settings = new XmlWriterSettings
             {
-                Indent = true,
+                Indent = indent,
                 Encoding = new UTF8Encoding(false),
                 OmitXmlDeclaration = false
             };
@@ -432,6 +368,134 @@ namespace EmbarcaPro.API.Services
             await context.SaveChangesAsync();
 
             return ServiceResult<CteResponse>.Ok(cte.ToResponse(), successMessage);
+        }
+
+        public async Task<ServiceResult<CteResponse>> SignCteAsync(Guid id)
+        {
+            var cte = await context.Ctes
+                .AsSplitQuery()
+                .Include(c => c.Company)
+                .Include(c => c.Partners).ThenInclude(p => p.Partner)
+                .Include(c => c.FreightComponents)
+                .Include(c => c.Icms)
+                .Include(c => c.Cargo).ThenInclude(c => c!.Quantities)
+                .Include(c => c.ReferencedInvoices)
+                .FirstOrDefaultAsync(c => c.PublicId == id);
+
+            if (cte is null)
+                return ServiceResult<CteResponse>.Fail("CT-e não encontrado.", ErrorType.NotFound);
+
+            try
+            {
+                var cteXml = await BuildXmlAsync(cte);
+                var xml = Serialize(cteXml, indent: false);
+
+                var signed = signer.Sign(xml, cteXml.InfCte.Id);
+
+                cte.MarkAsSigned(signed);
+
+                await context.SaveChangesAsync();
+
+                return ServiceResult<CteResponse>.Ok(cte.ToResponse(), "CT-e assinado com sucesso.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return ServiceResult<CteResponse>.Fail(ex.Message, ErrorType.Conflict);
+            }
+            catch (FileNotFoundException ex)
+            {
+                return ServiceResult<CteResponse>.Fail(ex.Message, ErrorType.Validation);
+            }
+        }
+
+        public async Task<ServiceResult<string>> GetSignedXmlAsync(Guid id)
+        {
+            var registro = await context.Ctes
+                .AsNoTracking()
+                .Where(c => c.PublicId == id)
+                .Select(c => new { c.SignedXml })
+                .FirstOrDefaultAsync();
+
+            if (registro is null)
+                return ServiceResult<string>.Fail("CT-e não encontrado.", ErrorType.NotFound);
+
+            if (string.IsNullOrWhiteSpace(registro.SignedXml))
+                return ServiceResult<string>.Fail("Este CT-e ainda não foi assinado.", ErrorType.Conflict);
+
+            return ServiceResult<string>.Ok(registro.SignedXml, "XML assinado.");
+        }
+
+        private async Task<CteXml> BuildXmlAsync(Cte cte)
+        {
+            if (string.IsNullOrWhiteSpace(cte.AccessKey))
+                throw new InvalidOperationException("Gere a chave de acesso (prepare) antes de montar o XML.");
+
+            if (cte.Icms is null)
+                throw new InvalidOperationException("O CT-e não tem tributação de ICMS definida.");
+
+            var codes = new List<string>
+            {
+                cte.OriginIbgeCityCode,
+                cte.DestinationIbgeCityCode,
+                cte.Company.Address.IbgeCode
+            };
+
+            codes.AddRange(cte.Partners.Select(p => p.Partner.Address.IbgeCode));
+            codes = codes.Distinct().ToList();
+
+            var cities = await context.Cities
+                .AsNoTracking()
+                .Where(c => codes.Contains(c.IbgeCode))
+                .ToDictionaryAsync(c => c.IbgeCode);
+
+            var faltando = codes.Where(c => !cities.ContainsKey(c)).ToList();
+
+            if (faltando.Count > 0)
+                throw new InvalidOperationException(
+                    $"Município não encontrado na tabela IBGE: {string.Join(", ", faltando)}.");
+
+            T? MapPartner<T>(PartnerType type, Func<Partner, City, T> map) where T : class
+            {
+                var link = cte.Partners.FirstOrDefault(p => p.Type == type);
+
+                return link is null
+                    ? null
+                    : map(link.Partner, cities[link.Partner.Address.IbgeCode]);
+            }
+
+            return new CteXml
+            {
+                InfCte = new InfCte
+                {
+                    Id = $"CTe{cte.AccessKey}",
+                    Versao = "4.00",
+
+                    Ide = IdeMapper.Map(
+                        cte,
+                        cities[cte.OriginIbgeCityCode],
+                        cities[cte.DestinationIbgeCityCode],
+                        cities[cte.Company.Address.IbgeCode]),
+
+                    Emit = EmitMapper.Map(cte.Company, cities[cte.Company.Address.IbgeCode]),
+
+                    Rem = MapPartner(PartnerType.Shipper, PartnerMapper.MapRem),
+                    Exped = MapPartner(PartnerType.Dispatching, PartnerMapper.MapExped),
+                    Receb = MapPartner(PartnerType.Receiver, PartnerMapper.MapReceb),
+                    Dest = MapPartner(PartnerType.Consignee, PartnerMapper.MapDest),
+
+                    VPrest = VPrestMapper.Map(cte),
+                    Imp = ImpMapper.Map(cte.Icms),
+                    InfCteNorm = InfCteNormMapper.Map(cte),
+
+                    InfRespTec = new InfRespTec
+                    {
+                        Cnpj = Company.OnlyDigits(techResponsible.Value.Cnpj),
+                        XContato = XmlText.Normalize(techResponsible.Value.Contact, 60),
+                        Email = techResponsible.Value.Email,
+                        Fone = Company.OnlyDigits(techResponsible.Value.Phone)
+                    }
+                }
+            };
         }
     }
 }

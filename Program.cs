@@ -60,12 +60,16 @@ builder.Services.AddScoped<ICurrentUser, CurrentUser>();
 builder.Services.AddScoped<IFreightService, FreightService>();
 builder.Services.AddScoped<ICteService, CteService>();
 builder.Services.AddScoped<IPartnerService, PartnerService>();
+builder.Services.AddScoped<CteSigner>();
 
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Services.Configure<TechnicalResponsibleOptions>(
     builder.Configuration.GetSection(TechnicalResponsibleOptions.SectionName));
+
+builder.Services.Configure<DigitalCertificateOptions>(
+    builder.Configuration.GetSection(DigitalCertificateOptions.SectionName));
 
 var jwtSection = builder.Configuration.GetSection(JwtSettings.SectionName);
 builder.Services.Configure<JwtSettings>(jwtSection);

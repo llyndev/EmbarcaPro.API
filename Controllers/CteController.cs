@@ -104,5 +104,27 @@ namespace EmbarcaPro.API.Controllers
                 errors
             });
         }
+
+        [HttpPut("{id:guid}/sign")]
+        [Authorize(Roles = nameof(UserRole.Admin) + "," + nameof(UserRole.Operacional))]
+        public async Task<IActionResult> Sign([FromRoute] Guid id)
+        {
+            var result = await cteService.SignCteAsync(id);
+            return result.ToActionResult(this);
+        }
+
+        [HttpGet("{id:guid}/xml/signed/validate")]
+        [Authorize(Roles = nameof(UserRole.Admin) + "," + nameof(UserRole.Operacional))]
+        public async Task<IActionResult> ValidateSignedXml([FromRoute] Guid id)
+        {
+            var result = await cteService.GetSignedXmlAsync(id);
+
+            if (!result.Success)
+                return result.ToActionResult(this);
+
+            var errors = CteXmlValidator.Validate(result.Data!);
+
+            return Ok(new { valid = errors.Count == 0, errorCount = errors.Count, errors });
+        }
     }
 }
